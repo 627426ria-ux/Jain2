@@ -17,11 +17,13 @@ export default function LogoTicker() {
           Built in collaboration with industry leaders
         </motion.h2>
 
-        <div className="relative w-full overflow-hidden flex items-center">
-          {/* Changed from-[#02040a] to from-white so it blends seamlessly */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-
+        {/* 
+          FIXED: Removed the white gradient boxes.
+          Added a CSS mask-image here. This smoothly fades the logos to transparent 
+          at the edges, revealing your blue gradient background perfectly.
+        */}
+        <div className="relative w-full overflow-hidden flex items-center [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+          
           <motion.div
             animate={{ x: ["0%", "-50%"] }}
             transition={{ ease: "linear", duration: 35, repeat: Infinity }}
