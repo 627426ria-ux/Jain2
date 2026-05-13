@@ -62,7 +62,7 @@ export default function Hero() {
             whileTap={{ scale: 0.98 }}
             className="w-full sm:w-auto justify-center bg-[#0066ff] text-white px-8 py-4 rounded-full font-semibold text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center gap-2.5 shadow-[0_10px_30px_rgba(0,102,255,0.2)] hover:shadow-[0_15px_40px_rgba(0,102,255,0.35)] group"
           >
-            Reserve your seat
+            Apply now
             <span className="text-base leading-none pb-[1px] font-light group-hover:translate-x-1 transition-transform">{'→'}</span>
           </motion.button>
 
@@ -71,7 +71,7 @@ export default function Hero() {
             whileHover={{ opacity: 1, x: 4 }}
             className="w-full sm:w-auto justify-center text-[#02040a]/50 hover:text-[#02040a] px-6 py-4 font-bold text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center gap-2.5 group"
           >
-            Book a demo
+            Download brochure
             <span className="text-base leading-none pb-[1px] font-light group-hover:translate-x-1 transition-transform">{'→'}</span>
           </motion.button>
         </motion.div>

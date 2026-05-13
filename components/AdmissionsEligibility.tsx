@@ -11,7 +11,6 @@ export default function AdmissionsEligibility() {
   };
 
   const itemVars: Variants = {
-    // Subtle scale reveal for premium feel
     hidden: { opacity: 0, y: 20, scale: 0.98, filter: "blur(5px)" },
     show: {
       opacity: 1,
@@ -21,6 +20,31 @@ export default function AdmissionsEligibility() {
       transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
     },
   };
+
+  // Progression Timeline Variants
+  const trackLineDesktop: Variants = {
+    hidden: { scaleX: 0 },
+    show: { scaleX: 1, transition: { duration: 1.5, ease: "easeInOut", delay: 0.5 } }
+  };
+
+  const trackLineMobile: Variants = {
+    hidden: { scaleY: 0 },
+    show: { scaleY: 1, transition: { duration: 1.5, ease: "easeInOut", delay: 0.5 } }
+  };
+
+  const activeNode = (delayTime: number): Variants => ({
+    hidden: { 
+      borderColor: "#e5e7eb", 
+      color: "#9ca3af", 
+      boxShadow: "0px 0px 0px rgba(0,102,255,0)" 
+    },
+    show: { 
+      borderColor: "#0066ff", 
+      color: "#0066ff", 
+      boxShadow: "0px 0px 15px rgba(0,102,255,0.2)", 
+      transition: { duration: 0.4, ease: "easeOut", delay: delayTime } 
+    }
+  });
 
   return (
     <section className="relative z-20 w-full py-20 sm:py-24 md:py-32 bg-transparent overflow-hidden px-4 sm:px-6">
@@ -65,7 +89,6 @@ export default function AdmissionsEligibility() {
             variants={itemVars}
             className="flex-1 lg:max-w-sm rounded-[24px] bg-gradient-to-b from-[#0066ff]/5 to-white border border-[#0066ff]/20 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 sm:p-8 md:p-10 flex flex-col justify-between relative overflow-hidden"
           >
-            {/* Ambient inner glow */}
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#0066ff]/30 to-transparent" />
             
             <div>
@@ -149,17 +172,29 @@ export default function AdmissionsEligibility() {
               <p className="text-[10px] sm:text-[11px] text-[#02040a]/40 font-semibold uppercase tracking-[0.2em] mb-6 sm:mb-8">Admission Process</p>
               
               <div className="relative flex flex-col sm:flex-row justify-between gap-6 sm:gap-4">
-                {/* Connecting Line (Desktop) */}
-                <div className="hidden sm:block absolute top-[23px] left-[10%] right-[10%] h-px bg-gradient-to-r from-[#0066ff]/20 via-[#0066ff]/50 to-gray-200" />
                 
-                {/* Connecting Line (Mobile) */}
-                <div className="block sm:hidden absolute left-[23px] top-[10%] bottom-[10%] w-px bg-gradient-to-b from-[#0066ff]/20 via-[#0066ff]/50 to-gray-200" />
+                {/* --- DESKTOP ANIMATED LINE (Mathematically centered) --- */}
+                <div className="hidden sm:block absolute top-[23px] left-[24px] right-[24px] h-[2px] bg-gray-100" />
+                <motion.div 
+                  variants={trackLineDesktop}
+                  className="hidden sm:block absolute top-[23px] left-[24px] right-[24px] h-[2px] bg-[#0066ff] origin-left shadow-[0_0_10px_rgba(0,102,255,0.3)]" 
+                />
+                
+                {/* --- MOBILE ANIMATED LINE (Mathematically centered) --- */}
+                <div className="block sm:hidden absolute left-[23px] top-[24px] bottom-[24px] w-[2px] bg-gray-100" />
+                <motion.div 
+                  variants={trackLineMobile}
+                  className="block sm:hidden absolute left-[23px] top-[24px] bottom-[24px] w-[2px] bg-[#0066ff] origin-top shadow-[0_0_10px_rgba(0,102,255,0.3)]" 
+                />
 
                 {/* Step 1 */}
                 <div className="relative z-10 flex flex-row sm:flex-col items-center sm:text-center gap-4 sm:gap-3 group">
-                  <div className="w-12 h-12 rounded-full bg-white border border-[#0066ff] flex items-center justify-center text-[#0066ff] shadow-[0_0_15px_rgba(0,102,255,0.15)] group-hover:bg-[#0066ff]/5 transition-colors">
+                  <motion.div 
+                    variants={activeNode(0.5)}
+                    className="w-12 h-12 rounded-full bg-white border-2 flex items-center justify-center font-semibold transition-all duration-300 group-hover:bg-white/20 group-hover:backdrop-blur-sm"
+                  >
                     1
-                  </div>
+                  </motion.div>
                   <div>
                     <h5 className="text-[#02040a] font-medium text-[14px] sm:text-[15px]">Online Application</h5>
                     <p className="text-[#02040a]/50 text-[12px] hidden sm:block mt-1 font-light">Submit your details</p>
@@ -168,9 +203,12 @@ export default function AdmissionsEligibility() {
 
                 {/* Step 2 */}
                 <div className="relative z-10 flex flex-row sm:flex-col items-center sm:text-center gap-4 sm:gap-3 group">
-                  <div className="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 group-hover:border-[#0066ff]/50 group-hover:text-[#0066ff] transition-colors">
+                  <motion.div 
+                    variants={activeNode(1.25)}
+                    className="w-12 h-12 rounded-full bg-white border-2 flex items-center justify-center font-semibold transition-all duration-300 group-hover:bg-white/20 group-hover:backdrop-blur-sm"
+                  >
                     2
-                  </div>
+                  </motion.div>
                   <div>
                     <h5 className="text-[#02040a] font-medium text-[14px] sm:text-[15px]">Counselling Call</h5>
                     <p className="text-[#02040a]/50 text-[12px] hidden sm:block mt-1 font-light">1-on-1 discussion</p>
@@ -179,16 +217,19 @@ export default function AdmissionsEligibility() {
 
                 {/* Step 3 */}
                 <div className="relative z-10 flex flex-row sm:flex-col items-center sm:text-center gap-4 sm:gap-3 group">
-                  <div className="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 group-hover:border-[#0066ff]/50 group-hover:text-[#0066ff] transition-colors">
+                  <motion.div 
+                    variants={activeNode(2.0)}
+                    className="w-12 h-12 rounded-full bg-white border-2 flex items-center justify-center font-semibold transition-all duration-300 group-hover:bg-white/20 group-hover:backdrop-blur-sm"
+                  >
                     3
-                  </div>
+                  </motion.div>
                   <div>
                     <h5 className="text-[#02040a] font-medium text-[14px] sm:text-[15px]">Offer Letter</h5>
                     <p className="text-[#02040a]/50 text-[12px] hidden sm:block mt-1 font-light">Welcome to JAIN</p>
                   </div>
                 </div>
-              </div>
 
+              </div>
             </motion.div>
           </div>
         </motion.div>
