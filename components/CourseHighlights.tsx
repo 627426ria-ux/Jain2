@@ -75,12 +75,14 @@ export default function CourseHighlights() {
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(5px)" },
+    // Added a subtle scale effect for a smoother, premium reveal
+    hidden: { opacity: 0, y: 30, scale: 0.95, filter: "blur(5px)" },
     show: {
       opacity: 1,
       y: 0,
+      scale: 1,
       filter: "blur(0px)",
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
     },
   };
 
@@ -88,8 +90,8 @@ export default function CourseHighlights() {
     <section className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
       
       {/* --- LOCALIZED SECTION GLOW --- */}
-      {/* Blends the dark gap between sections with a soft blue ambient light */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw] md:w-[70vw] md:h-[70vw] bg-[radial-gradient(ellipse_at_center,rgba(0,102,255,0.05),transparent_60%)] pointer-events-none z-0" />
+      {/* Soft blue ambient light works perfectly on white backgrounds too */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw] md:w-[70vw] md:h-[70vw] bg-[radial-gradient(ellipse_at_center,rgba(0,102,255,0.04),transparent_60%)] pointer-events-none z-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         
@@ -103,14 +105,14 @@ export default function CourseHighlights() {
         >
           <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
             <div className="w-8 h-[1px] bg-[#0066ff]" />
-            <span className="text-[11px] text-[#0066ff] font-semibold tracking-[0.2em] uppercase">
+            <span className="text-[11px] text-[#0066ff] font-bold tracking-[0.2em] uppercase">
               Course Highlights
             </span>
             <div className="w-8 h-[1px] bg-[#0066ff]" />
           </motion.div>
           <motion.h2 
             variants={itemVars}
-            className="text-3xl md:text-5xl font-light tracking-tight leading-[1.1] text-white"
+            className="text-3xl md:text-5xl font-light tracking-tight leading-[1.1] text-[#02040a]"
           >
             The Ultimate <span className="text-[#0066ff] font-medium">Advantage</span>
           </motion.h2>
@@ -128,22 +130,22 @@ export default function CourseHighlights() {
             <motion.div 
               key={index}
               variants={itemVars} 
-              // Updated to match the glassmorphic style of ProgrammeOverview
-              className="group relative rounded-[24px] bg-[#02040a]/40 backdrop-blur-md border border-white/5 p-8 md:p-10 transition-all duration-500 hover:bg-white/[0.04] hover:border-[#0066ff]/40 hover:-translate-y-1"
+              // Updated to crisp white cards with soft shadows and elegant borders
+              className="group relative rounded-[24px] bg-white border border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-8 md:p-10 transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,102,255,0.08)] hover:border-[#0066ff]/30 hover:-translate-y-1"
             >
-              {/* Subtle radial glow on hover */}
-              <div className="absolute inset-0 rounded-[24px] bg-[radial-gradient(ellipse_at_top_right,rgba(0,102,255,0.08),transparent_50%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              {/* Subtle radial glow inside the card on hover */}
+              <div className="absolute inset-0 rounded-[24px] bg-[radial-gradient(ellipse_at_top_right,rgba(0,102,255,0.04),transparent_50%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               
-              {/* Icon Container */}
-              <div className="w-14 h-14 rounded-full bg-white/[0.03] border border-white/10 flex items-center justify-center text-white/50 mb-8 group-hover:text-[#0066ff] group-hover:border-[#0066ff]/40 group-hover:bg-[#0066ff]/10 transition-all duration-500">
+              {/* Icon Container (Light Mode styling) */}
+              <div className="w-14 h-14 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-[#02040a]/40 mb-8 group-hover:text-[#0066ff] group-hover:border-[#0066ff]/30 group-hover:bg-[#0066ff]/5 transition-all duration-500">
                 {card.icon}
               </div>
 
               {/* Card Content */}
-              <h3 className="text-xl md:text-2xl font-medium text-white mb-3 tracking-tight">
+              <h3 className="text-xl md:text-2xl font-medium text-[#02040a] mb-3 tracking-tight">
                 {card.title}
               </h3>
-              <p className="text-white/50 text-[14px] md:text-[15px] leading-relaxed font-light">
+              <p className="text-[#02040a]/60 text-[14px] md:text-[15px] leading-relaxed font-light">
                 {card.description}
               </p>
             </motion.div>

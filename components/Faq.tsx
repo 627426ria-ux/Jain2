@@ -56,27 +56,29 @@ export default function FAQ() {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+      transition: { staggerChildren: 0.1, delayChildren: 0.1 },
     },
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(5px)" },
+    // Subtle scale reveal for premium feel
+    hidden: { opacity: 0, y: 20, scale: 0.98, filter: "blur(5px)" },
     show: {
       opacity: 1,
       y: 0,
+      scale: 1,
       filter: "blur(0px)",
       transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
     },
   };
 
   return (
-    <section className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
+    <section id = 'faq' className="relative z-20 w-full py-20 sm:py-24 md:py-32 bg-transparent overflow-hidden px-4 sm:px-6">
       
-      {/* --- LOCALIZED SECTION GLOW --- */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw] md:w-[60vw] md:h-[60vw] bg-[radial-gradient(ellipse_at_center,rgba(0,102,255,0.03),transparent_60%)] pointer-events-none z-0" />
+      {/* --- LOCALIZED SECTION GLOW (Light Mode) --- */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] md:w-[60vw] md:h-[60vw] bg-[radial-gradient(ellipse_at_center,rgba(0,102,255,0.04),transparent_60%)] pointer-events-none z-0" />
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6">
+      <div className="relative z-10 max-w-4xl mx-auto">
         
         {/* Section Header */}
         <motion.div 
@@ -84,18 +86,18 @@ export default function FAQ() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          className="flex flex-col items-center text-center mb-16"
+          className="flex flex-col items-center text-center mb-12 sm:mb-16"
         >
-          <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-[1px] bg-[#0066ff]" />
-            <span className="text-[11px] text-[#0066ff] font-semibold tracking-[0.2em] uppercase">
+          <motion.div variants={itemVars} className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <div className="w-6 sm:w-8 h-[1px] bg-[#0066ff]" />
+            <span className="text-[10px] sm:text-[11px] text-[#0066ff] font-bold tracking-[0.2em] uppercase">
               Got Questions?
             </span>
-            <div className="w-8 h-[1px] bg-[#0066ff]" />
+            <div className="w-6 sm:w-8 h-[1px] bg-[#0066ff]" />
           </motion.div>
           <motion.h2 
             variants={itemVars}
-            className="text-3xl md:text-5xl font-light tracking-tight leading-[1.1] text-white"
+            className="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight leading-[1.1] text-[#02040a]"
           >
             Frequently Asked <span className="text-[#0066ff] font-medium">Questions</span>
           </motion.h2>
@@ -107,7 +109,7 @@ export default function FAQ() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-3 sm:gap-4"
         >
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
@@ -116,22 +118,23 @@ export default function FAQ() {
               <motion.div 
                 variants={itemVars}
                 key={index}
-                className={`rounded-[20px] backdrop-blur-md border transition-all duration-300 overflow-hidden ${
+                // Updated to clean white cards with soft borders and shadows
+                className={`rounded-[20px] bg-white border transition-all duration-300 overflow-hidden ${
                   isOpen 
-                    ? "bg-[#02040a]/60 border-[#0066ff]/30 shadow-[0_10px_30px_-10px_rgba(0,102,255,0.15)]" 
-                    : "bg-[#02040a]/30 border-white/5 hover:bg-white/[0.03] hover:border-white/10"
+                    ? "border-[#0066ff]/30 shadow-[0_15px_40px_-10px_rgba(0,102,255,0.12)]" 
+                    : "border-gray-200 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:border-[#0066ff]/20 hover:shadow-[0_8px_25px_rgba(0,0,0,0.04)]"
                 }`}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none"
+                  className="w-full flex items-center justify-between p-5 sm:p-6 md:p-8 text-left focus:outline-none group"
                 >
-                  <span className={`text-[16px] md:text-[18px] font-medium pr-8 transition-colors duration-300 ${isOpen ? "text-[#0066ff]" : "text-white"}`}>
+                  <span className={`text-[15px] sm:text-[16px] md:text-[18px] font-medium pr-6 sm:pr-8 transition-colors duration-300 ${isOpen ? "text-[#0066ff]" : "text-[#02040a] group-hover:text-[#0066ff]"}`}>
                     {faq.question}
                   </span>
                   
                   {/* Plus/Minus Icon */}
-                  <div className={`flex-shrink-0 w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-300 ${isOpen ? "border-[#0066ff]/50 bg-[#0066ff]/10 text-[#0066ff]" : "border-white/10 text-white/50"}`}>
+                  <div className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full border flex items-center justify-center transition-all duration-300 ${isOpen ? "border-[#0066ff]/30 bg-[#0066ff]/5 text-[#0066ff]" : "border-gray-200 text-gray-400 group-hover:border-[#0066ff]/30 group-hover:text-[#0066ff]"}`}>
                     <motion.svg 
                       animate={{ rotate: isOpen ? 45 : 0 }}
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
@@ -151,7 +154,7 @@ export default function FAQ() {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      <div className="px-6 pb-8 md:px-8 text-white/60 text-[14px] md:text-[15px] leading-relaxed font-light">
+                      <div className="px-5 pb-6 sm:px-6 sm:pb-8 md:px-8 text-[#02040a]/70 text-[13px] sm:text-[14px] md:text-[15px] leading-relaxed font-light">
                         {faq.answer}
                       </div>
                     </motion.div>
@@ -162,18 +165,18 @@ export default function FAQ() {
           })}
         </motion.div>
 
-        {/* Secondary Conversion CTA */}
+        {/* Secondary Conversion CTA (Fluid Stack on Mobile) */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-16 pt-10 border-t border-white/5 text-center"
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-gray-200 text-center flex flex-col items-center"
         >
-          <p className="text-white/50 text-[15px] font-light mb-6">
+          <p className="text-[#02040a]/60 text-[14px] sm:text-[15px] font-light mb-5 sm:mb-6 px-4">
             Didn't find what you're looking for?
           </p>
-          <button className="bg-transparent hover:bg-white/5 text-white border border-white/20 hover:border-[#0066ff] px-8 py-3.5 rounded-full font-medium text-[13px] uppercase tracking-widest transition-all">
+          <button className="w-full sm:w-auto bg-white hover:bg-gray-50 text-[#02040a] border border-gray-200 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold text-[12px] sm:text-[13px] uppercase tracking-widest shadow-[0_4px_15px_rgba(0,0,0,0.02)] transition-all hover:border-[#0066ff]/30 hover:text-[#0066ff] hover:-translate-y-0.5">
             Contact Support Team
           </button>
         </motion.div>

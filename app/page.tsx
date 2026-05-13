@@ -17,7 +17,7 @@ import ImageCTA from "@/components/ImageCTA";
 
 const jakarta = Plus_Jakarta_Sans({ 
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400","500", "600"],
   display: "swap",
 });
 
@@ -41,7 +41,7 @@ export default function Home() {
       <FacultyMentors/>
       <AdmissionsEligibility/>
       <FAQ/>
-      <ImageCTA/>
+      {/* <ImageCTA/> */}
       {/* <FinalCTA/> */}
     </main>
   );

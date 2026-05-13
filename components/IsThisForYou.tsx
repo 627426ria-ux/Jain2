@@ -20,12 +20,14 @@ export default function IsThisForYou() {
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(5px)" },
+    // Added a subtle scale effect for a smoother, premium reveal
+    hidden: { opacity: 0, y: 20, scale: 0.95, filter: "blur(5px)" },
     show: {
       opacity: 1,
       y: 0,
+      scale: 1,
       filter: "blur(0px)",
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
     },
   };
 
@@ -47,14 +49,14 @@ export default function IsThisForYou() {
         >
           <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
             <div className="w-8 h-[1px] bg-[#0066ff]" />
-            <span className="text-[11px] text-[#0066ff] font-semibold tracking-[0.2em] uppercase">
+            <span className="text-[11px] text-[#0066ff] font-bold tracking-[0.2em] uppercase">
               Candidate Profile
             </span>
             <div className="w-8 h-[1px] bg-[#0066ff]" />
           </motion.div>
           <motion.h2 
             variants={itemVars}
-            className="text-3xl md:text-5xl font-light tracking-tight leading-[1.1] text-white"
+            className="text-3xl md:text-5xl font-light tracking-tight leading-[1.1] text-[#02040a]"
           >
             Is This Programme <span className="text-[#0066ff] font-medium">For You?</span>
           </motion.h2>
@@ -72,17 +74,18 @@ export default function IsThisForYou() {
             <motion.div 
               key={index}
               variants={itemVars} 
-              className="group relative rounded-2xl bg-[#02040a]/40 backdrop-blur-md border border-white/5 p-6 md:p-8 flex items-start gap-5 transition-all duration-300 hover:bg-white/[0.03] hover:border-white/10"
+              // Updated to white backgrounds, subtle borders, and soft hover shadows
+              className="group relative rounded-2xl bg-white border border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 md:p-8 flex items-start gap-5 transition-all duration-300 hover:shadow-[0_15px_40px_rgba(0,102,255,0.08)] hover:border-[#0066ff]/30 hover:-translate-y-1"
             >
-              {/* Premium Checkmark Icon */}
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#0066ff]/10 border border-[#0066ff]/30 flex items-center justify-center mt-0.5 group-hover:bg-[#0066ff]/20 group-hover:border-[#0066ff]/50 transition-colors duration-300">
+              {/* Premium Checkmark Icon (Kept blue to pop against white) */}
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#0066ff]/5 border border-[#0066ff]/20 flex items-center justify-center mt-0.5 group-hover:bg-[#0066ff]/10 group-hover:border-[#0066ff]/40 transition-colors duration-300">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0066ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </div>
 
-              {/* Text Content */}
-              <p className="text-white/70 text-[15px] md:text-[16px] leading-relaxed font-light group-hover:text-white/90 transition-colors duration-300">
+              {/* Text Content (Darkened for Light Mode) */}
+              <p className="text-[#02040a]/70 text-[15px] md:text-[16px] leading-relaxed font-light group-hover:text-[#02040a] transition-colors duration-300">
                 {text}
               </p>
             </motion.div>

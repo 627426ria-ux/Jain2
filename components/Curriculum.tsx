@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 
-// Curriculum Data extracted and normalized into Years for a consistent UI
+// Curriculum Data extracted and normalized
 const specialisations = [
   {
     id: "applied-ai",
@@ -185,34 +185,34 @@ const specialisations = [
 
 export default function Curriculum() {
   const [activeTab, setActiveTab] = useState(specialisations[0].id);
-
   const activeData = specialisations.find((s) => s.id === activeTab);
 
   const containerVars: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+      transition: { staggerChildren: 0.1, delayChildren: 0.1 },
     },
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(5px)" },
+    hidden: { opacity: 0, y: 20, scale: 0.98, filter: "blur(5px)" },
     show: {
       opacity: 1,
       y: 0,
+      scale: 1,
       filter: "blur(0px)",
       transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
     },
   };
 
   return (
-    <section className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
+    <section id = 'curriculum' className="relative z-20 w-full py-20 sm:py-24 md:py-32 bg-transparent overflow-hidden px-4 sm:px-6">
       
-      {/* Localized Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw] md:w-[60vw] md:h-[60vw] bg-[radial-gradient(ellipse_at_center,rgba(0,102,255,0.05),transparent_60%)] pointer-events-none z-0" />
+      {/* Localized Glow (Light Mode adjusted) */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] md:w-[60vw] md:h-[60vw] bg-[radial-gradient(ellipse_at_center,rgba(0,102,255,0.04),transparent_60%)] pointer-events-none z-0" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
+      <div className="relative z-10 w-full max-w-7xl mx-auto">
         
         {/* Section Header */}
         <motion.div 
@@ -220,38 +220,38 @@ export default function Curriculum() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          className="flex flex-col items-center text-center mb-16"
+          className="flex flex-col items-center text-center mb-12 sm:mb-16"
         >
-          <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-[1px] bg-[#0066ff]" />
-            <span className="text-[11px] text-[#0066ff] font-semibold tracking-[0.2em] uppercase">
-              Section 7
+          <motion.div variants={itemVars} className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <div className="w-6 sm:w-8 h-[1px] bg-[#0066ff]" />
+            <span className="text-[10px] sm:text-[11px] text-[#0066ff] font-bold tracking-[0.2em] uppercase">
+              Deep Dive
             </span>
-            <div className="w-8 h-[1px] bg-[#0066ff]" />
+            <div className="w-6 sm:w-8 h-[1px] bg-[#0066ff]" />
           </motion.div>
           <motion.h2 
             variants={itemVars}
-            className="text-3xl md:text-5xl font-light tracking-tight leading-[1.1] text-white"
+            className="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight leading-[1.1] text-[#02040a]"
           >
             Curriculum — <span className="text-[#0066ff] font-medium">Specialisations</span>
           </motion.h2>
         </motion.div>
 
-        {/* Custom Tab Navigation */}
+        {/* Custom Tab Navigation (Fluid layout for mobile wrapping) */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex flex-wrap justify-center gap-3 mb-16"
+          className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12 sm:mb-16"
         >
           {specialisations.map((spec) => (
             <button
               key={spec.id}
               onClick={() => setActiveTab(spec.id)}
-              className={`px-6 py-3 rounded-full text-[13px] md:text-[14px] font-medium tracking-wide transition-all duration-300 ${
+              className={`px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-[12px] sm:text-[13px] md:text-[14px] font-medium tracking-wide transition-all duration-300 ${
                 activeTab === spec.id
-                  ? "bg-[#0066ff] text-white shadow-[0_0_20px_rgba(0,102,255,0.4)]"
-                  : "bg-white/5 text-white/50 border border-white/5 hover:bg-white/10 hover:text-white"
+                  ? "bg-[#0066ff] text-white shadow-[0_4px_20px_rgba(0,102,255,0.3)]"
+                  : "bg-white text-[#02040a]/60 border border-gray-200 hover:bg-gray-50 hover:text-[#02040a] hover:border-gray-300 shadow-sm"
               }`}
             >
               {spec.title}
@@ -259,37 +259,37 @@ export default function Curriculum() {
           ))}
         </motion.div>
 
-        {/* Tab Content (Animated) */}
+        {/* Tab Content (Animated Grid) */}
         <div className="min-h-[400px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+              initial={{ opacity: 0, y: 15, filter: "blur(8px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -20, filter: "blur(8px)" }}
+              exit={{ opacity: 0, y: -15, filter: "blur(8px)" }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-auto-fit gap-5 sm:gap-6"
             >
               {activeData?.years.map((year, index) => (
                 <div 
                   key={index}
-                  className="rounded-3xl bg-[#02040a]/40 backdrop-blur-md border border-white/5 p-8"
+                  className="rounded-[24px] bg-white border border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_15px_40px_rgba(0,102,255,0.06)] transition-shadow duration-300 p-6 sm:p-8"
                 >
-                  <h3 className="text-[#0066ff] font-medium text-lg mb-6 pb-4 border-b border-white/5">
+                  <h3 className="text-[#0066ff] font-medium text-lg sm:text-xl mb-5 sm:mb-6 pb-3 sm:pb-4 border-b border-gray-100">
                     {year.title}
                   </h3>
-                  <ul className="space-y-4">
+                  <ul className="space-y-3 sm:space-y-4">
                     {year.subjects.map((subject, sIdx) => {
-                      // Separate the acronym from the title for styling (e.g. "DSA — ...")
                       const parts = subject.split(" — ");
                       return (
                         <li key={sIdx} className="flex items-start gap-3">
-                          <div className="w-1.5 h-1.5 rounded-full bg-white/20 mt-2 flex-shrink-0" />
-                          <p className="text-[14px] md:text-[15px] leading-relaxed font-light text-white/70">
+                          {/* Light Mode Bullet Point */}
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#0066ff]/60 mt-2 flex-shrink-0" />
+                          <p className="text-[13px] sm:text-[14px] md:text-[15px] leading-relaxed font-light text-[#02040a]/70">
                             {parts.length > 1 ? (
                               <>
-                                <span className="font-medium text-white/90">{parts[0]}</span>
-                                <span className="opacity-50"> — </span>
+                                <span className="font-medium text-[#02040a]">{parts[0]}</span>
+                                <span className="opacity-50 text-[#02040a]"> — </span>
                                 {parts[1]}
                               </>
                             ) : (
@@ -306,21 +306,21 @@ export default function Curriculum() {
           </AnimatePresence>
         </div>
 
-        {/* Lead Capture / Syllabus CTA */}
+        {/* Lead Capture / Syllabus CTA (Fully Responsive Stack) */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-20 pt-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-8"
+          className="mt-16 sm:mt-20 pt-10 sm:pt-12 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 text-center md:text-left"
         >
           <div>
-            <h4 className="text-xl md:text-2xl font-medium text-white mb-2">Want the full breakdown?</h4>
-            <p className="text-white/50 text-[14px] md:text-[15px] font-light">
-              Get the comprehensive syllabus including all modules, electives, and outcomes.
+            <h4 className="text-xl sm:text-2xl font-medium text-[#02040a] mb-2 tracking-tight">Want the full breakdown?</h4>
+            <p className="text-[#02040a]/60 text-[13px] sm:text-[14px] md:text-[15px] font-light max-w-lg">
+              Get the comprehensive syllabus including all modules, electives, and outcomes sent directly to you.
             </p>
           </div>
-          <button className="flex-shrink-0 bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-4 rounded-full font-semibold text-[13px] uppercase tracking-widest transition-all hover:border-white/30 hover:-translate-y-0.5 group flex items-center gap-3">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:text-[#0066ff] transition-colors">
+          <button className="w-full md:w-auto flex-shrink-0 bg-white hover:bg-gray-50 text-[#02040a] border border-gray-200 shadow-sm px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold text-[12px] sm:text-[13px] uppercase tracking-widest transition-all hover:border-[#0066ff]/30 hover:-translate-y-0.5 group flex items-center justify-center gap-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#02040a]/50 group-hover:text-[#0066ff] transition-colors">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />

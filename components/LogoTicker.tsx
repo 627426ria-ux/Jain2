@@ -12,14 +12,15 @@ export default function LogoTicker() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-white/40 font-semibold mb-10 md:mb-14"
+          className="text-center text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-[#02040a]/50 font-semibold mb-10 md:mb-14"
         >
           Built in collaboration with industry leaders
         </motion.h2>
 
         <div className="relative w-full overflow-hidden flex items-center">
-          <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-[#02040a] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-[#02040a] to-transparent z-10 pointer-events-none" />
+          {/* Changed from-[#02040a] to from-white so it blends seamlessly */}
+          <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
           <motion.div
             animate={{ x: ["0%", "-50%"] }}
@@ -28,7 +29,10 @@ export default function LogoTicker() {
           >
             <div className="flex items-center gap-16 md:gap-32">
               {companies.map((company, index) => (
-                <span key={`logo-1-${index}`} className="text-xl md:text-2xl font-bold tracking-tight text-white/30 hover:text-white/80 transition-colors duration-300 cursor-default">
+                <span 
+                  key={`logo-1-${index}`} 
+                  className="text-xl md:text-2xl font-bold tracking-tight text-[#02040a]/30 hover:text-[#02040a]/80 transition-colors duration-300 cursor-default"
+                >
                   {company}
                 </span>
               ))}
@@ -36,7 +40,10 @@ export default function LogoTicker() {
             
             <div className="flex items-center gap-16 md:gap-32">
               {companies.map((company, index) => (
-                <span key={`logo-2-${index}`} className="text-xl md:text-2xl font-bold tracking-tight text-white/30 hover:text-white/80 transition-colors duration-300 cursor-default">
+                <span 
+                  key={`logo-2-${index}`} 
+                  className="text-xl md:text-2xl font-bold tracking-tight text-[#02040a]/30 hover:text-[#02040a]/80 transition-colors duration-300 cursor-default"
+                >
                   {company}
                 </span>
               ))}
