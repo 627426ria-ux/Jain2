@@ -15,8 +15,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Jain | Premium Digital Studio",
-  description: "Curated digital experiences built with precision.",
+  title: "Jain ",
+  description: "",
 };
 
 // Fixed the 'any' type error by adding { children: React.ReactNode }
