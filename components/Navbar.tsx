@@ -13,6 +13,10 @@ export default function Navbar() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
+    
+    // Call immediately on mount to set the correct state on initial load or refresh
+    onScroll();
+
     // passive: true is the single most impactful scroll perf fix possible.
     // Without it, the browser must wait for this handler to finish executing
     // before it can paint the next scroll frame, because it assumes the handler
@@ -42,7 +46,8 @@ export default function Navbar() {
         initial={{ y: prefersReducedMotion ? 0 : -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed top-0 w-full z-50 transition-all duration-500 py-4"
+        // Removed transition-all and explicitly targeted specific properties to avoid conflict with Framer Motion
+        className="fixed top-0 w-full z-50 transition-[background,border,box-shadow] duration-500 py-4"
         style={{
           background: scrolled ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.6)",
           backdropFilter: "blur(20px)",
