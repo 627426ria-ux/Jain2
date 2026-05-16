@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { motion, AnimatePresence, Variants, useReducedMotion } from "framer-motion";
 
 const specialisations = [
   {
@@ -181,6 +181,8 @@ const ACCENT = "#7b2fff";
 
 export default function Curriculum() {
   const [activeTab, setActiveTab] = useState(specialisations[0].id);
+  const prefersReducedMotion = useReducedMotion();
+
   const activeData = specialisations.find((s) => s.id === activeTab);
 
   const containerVars: Variants = {
@@ -192,7 +194,11 @@ export default function Curriculum() {
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+    hidden: {
+      opacity: 0,
+      y: prefersReducedMotion ? 0 : 20,
+      filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)",
+    },
     show: {
       opacity: 1,
       y: 0,
@@ -204,7 +210,7 @@ export default function Curriculum() {
   return (
     <section id="curriculum" className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
 
-      {/* Background glow */}
+      {/* Background glow — static */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
         style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
@@ -220,7 +226,11 @@ export default function Curriculum() {
           viewport={{ once: true, margin: "-100px" }}
           className="flex flex-col items-center text-center mb-12 sm:mb-16"
         >
-          <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
+          <motion.div
+            variants={itemVars}
+            className="flex items-center gap-3 mb-6"
+            style={{ willChange: "opacity, transform, filter" }}
+          >
             <div className="w-8 h-px" style={{ background: ACCENT }} />
             <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
               Deep Dive
@@ -231,7 +241,7 @@ export default function Curriculum() {
           <motion.h2
             variants={itemVars}
             className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
-            style={{ color: "#1a0050" }}
+            style={{ color: "#1a0050", willChange: "opacity, transform, filter" }}
           >
             <span className="font-light" style={{ color: ACCENT }}>Curriculum</span>
           </motion.h2>
@@ -239,11 +249,12 @@ export default function Curriculum() {
 
         {/* Tab Navigation */}
         <motion.div
-          initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+          initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 20, filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)" }}
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12 sm:mb-16"
+          style={{ willChange: "opacity, transform, filter" }}
         >
           {specialisations.map((spec) => (
             <button
@@ -257,12 +268,15 @@ export default function Curriculum() {
                       border: `1px solid rgba(123,47,255,0.45)`,
                       color: ACCENT,
                       boxShadow: "0 2px 16px rgba(123,47,255,0.12)",
+                      // Active tab: own layer so style swaps don't dirty neighbours
+                      transform: "translateZ(0)",
                     }
                   : {
                       background: "#ffffff",
                       border: "1px solid rgba(123,47,255,0.15)",
                       color: "rgba(30,0,80,0.4)",
                       boxShadow: "0 2px 8px rgba(123,47,255,0.04)",
+                      transform: "translateZ(0)",
                     }
               }
             >
@@ -271,16 +285,28 @@ export default function Curriculum() {
           ))}
         </motion.div>
 
-        {/* Tab Content */}
+        {/* Tab Content
+            AnimatePresence fires on every tab click — blur here is the worst offender
+            because it hits the main thread on every user interaction, not just on scroll.
+            On reduced-motion we drop to a plain opacity crossfade which is free. */}
         <div className="min-h-[400px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 15, filter: "blur(8px)" }}
+              initial={{
+                opacity: 0,
+                y: prefersReducedMotion ? 0 : 15,
+                filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)",
+              }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -15, filter: "blur(8px)" }}
+              exit={{
+                opacity: 0,
+                y: prefersReducedMotion ? 0 : -15,
+                filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)",
+              }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
+              style={{ willChange: "opacity, transform, filter" }}
             >
               {activeData?.years.map((year, index) => (
                 <div
@@ -290,6 +316,10 @@ export default function Curriculum() {
                     background: "#ffffff",
                     border: "1px solid rgba(123,47,255,0.15)",
                     boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
+                    // Pre-promote for hover; also carried inside an AnimatePresence
+                    // container so layer is ready before the crossfade completes
+                    transform: "translateZ(0)",
+                    willChange: "transform",
                   }}
                 >
                   {/* Hover glow */}
@@ -319,7 +349,6 @@ export default function Curriculum() {
                       const parts = subject.split(" — ");
                       return (
                         <li key={sIdx} className="flex items-start gap-3">
-                          {/* Dot */}
                           <div
                             className="w-1.5 h-1.5 rounded-full mt-[7px] flex-shrink-0"
                             style={{ background: "rgba(123,47,255,0.4)" }}

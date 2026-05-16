@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useEffect, useState } from "react";
-import { motion, useScroll, useTransform, Variants } from "framer-motion";
+import { motion, useScroll, useTransform, Variants, useReducedMotion } from "framer-motion";
 
 const journeySteps = [
   {
@@ -44,13 +44,23 @@ export default function ProgrammeJourney() {
   const containerRef = useRef<HTMLDivElement>(null);
   const ctaRowRef = useRef<HTMLDivElement>(null);
   const [lineCutoff, setLineCutoff] = useState(140);
+  const prefersReducedMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start center", "end center"],
   });
 
-  const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  // scaleY is a MotionValue driven by scroll — it updates every scroll tick.
+  // The animated div MUST be on its own GPU compositor layer or this causes a
+  // main-thread style recalculation on every scroll event, exactly like an
+  // unpassivated scroll listener. will-change: transform + translateZ(0) ensures
+  // the browser applies scaleY on the compositor thread only.
+  const scaleY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    prefersReducedMotion ? [1, 1] : [0, 1]
+  );
 
   useEffect(() => {
     const updateLayout = () => {
@@ -72,7 +82,11 @@ export default function ProgrammeJourney() {
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+    hidden: {
+      opacity: 0,
+      y: prefersReducedMotion ? 0 : 20,
+      filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)",
+    },
     show: {
       opacity: 1,
       y: 0,
@@ -84,7 +98,7 @@ export default function ProgrammeJourney() {
   return (
     <section className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
 
-      {/* Background glow — matches IsThisForYou */}
+      {/* Background glow — static */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
         style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
@@ -92,7 +106,7 @@ export default function ProgrammeJourney() {
 
       <div className="relative z-10 max-w-5xl mx-auto px-6">
 
-        {/* Section Header — mirrors IsThisForYou exactly */}
+        {/* Section Header */}
         <motion.div
           variants={containerVars}
           initial="hidden"
@@ -100,7 +114,11 @@ export default function ProgrammeJourney() {
           viewport={{ once: true, margin: "-100px" }}
           className="flex flex-col items-center text-center mb-16 md:mb-20"
         >
-          <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
+          <motion.div
+            variants={itemVars}
+            className="flex items-center gap-3 mb-6"
+            style={{ willChange: "opacity, transform, filter" }}
+          >
             <div className="w-8 h-px" style={{ background: ACCENT }} />
             <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
               3-Year Roadmap
@@ -111,7 +129,7 @@ export default function ProgrammeJourney() {
           <motion.h2
             variants={itemVars}
             className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
-            style={{ color: "#1a0050" }}
+            style={{ color: "#1a0050", willChange: "opacity, transform, filter" }}
           >
             Your Path to{" "}
             <span className="font-light" style={{ color: ACCENT }}>Industry Leadership</span>
@@ -134,6 +152,9 @@ export default function ProgrammeJourney() {
                 transformOrigin: "top",
                 background: ACCENT,
                 boxShadow: `0 0 12px rgba(123,47,255,0.4), 0 0 30px rgba(123,47,255,0.2)`,
+                // scaleY is a scroll-driven MotionValue — must be compositor-only
+                willChange: "transform",
+                transform: "translateZ(0)",
               }}
             />
           </div>
@@ -146,7 +167,7 @@ export default function ProgrammeJourney() {
                 {/* Timeline node */}
                 <div className="relative flex-shrink-0 mt-0 sm:mt-2 z-10">
                   <motion.div
-                    initial={{ scale: 0, opacity: 0 }}
+                    initial={{ scale: prefersReducedMotion ? 1 : 0, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
                     viewport={{ once: true, margin: "-20%" }}
                     transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
@@ -154,12 +175,16 @@ export default function ProgrammeJourney() {
                     style={{
                       background: "#ffffff",
                       border: "1px solid rgba(123,47,255,0.22)",
+                      willChange: "transform, opacity",
                     }}
                   >
                     {/* Hover ring */}
                     <div
                       className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                      style={{ border: `1.5px solid rgba(123,47,255,0.4)`, boxShadow: "0 0 20px rgba(123,47,255,0.15)" }}
+                      style={{
+                        border: `1.5px solid rgba(123,47,255,0.4)`,
+                        boxShadow: "0 0 20px rgba(123,47,255,0.15)",
+                      }}
                     />
                     <span
                       className="font-light text-base md:text-xl relative z-10"
@@ -170,7 +195,7 @@ export default function ProgrammeJourney() {
                   </motion.div>
                 </div>
 
-                {/* Card — matches IsThisForYou card style */}
+                {/* Card */}
                 <motion.div
                   variants={itemVars}
                   initial="hidden"
@@ -181,6 +206,8 @@ export default function ProgrammeJourney() {
                     background: "#ffffff",
                     border: "1px solid rgba(123,47,255,0.15)",
                     boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
+                    willChange: "opacity, transform, filter",
+                    transform: "translateZ(0)",
                   }}
                 >
                   {/* Hover glow */}
@@ -199,22 +226,13 @@ export default function ProgrammeJourney() {
                     className="relative z-10 mb-5 pb-5"
                     style={{ borderBottom: "1px solid rgba(123,47,255,0.08)" }}
                   >
-                    <p
-                      className="text-[11px] font-light tracking-widest uppercase mb-2"
-                      style={{ color: ACCENT }}
-                    >
+                    <p className="text-[11px] font-light tracking-widest uppercase mb-2" style={{ color: ACCENT }}>
                       {step.year}
                     </p>
-                    <h3
-                      className="text-xl md:text-2xl font-thin mb-2"
-                      style={{ color: "#1a0050" }}
-                    >
+                    <h3 className="text-xl md:text-2xl font-thin mb-2" style={{ color: "#1a0050" }}>
                       {step.title}
                     </h3>
-                    <p
-                      className="text-[13px] md:text-[14px] font-thin leading-relaxed"
-                      style={{ color: "rgba(30,0,80,0.45)" }}
-                    >
+                    <p className="text-[13px] md:text-[14px] font-thin leading-relaxed" style={{ color: "rgba(30,0,80,0.45)" }}>
                       {step.description}
                     </p>
                   </div>
@@ -223,7 +241,6 @@ export default function ProgrammeJourney() {
                   <ul className="relative z-10 space-y-4 mb-6">
                     {step.points.map((point, i) => (
                       <li key={i} className="flex items-start gap-4">
-                        {/* Checkmark — same as IsThisForYou */}
                         <div
                           className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-0.5"
                           style={{
@@ -245,10 +262,7 @@ export default function ProgrammeJourney() {
                             <polyline points="20 6 9 17 4 12" />
                           </svg>
                         </div>
-                        <p
-                          className="text-[14px] md:text-[15px] leading-relaxed font-thin"
-                          style={{ color: "rgba(30,0,80,0.5)" }}
-                        >
+                        <p className="text-[14px] md:text-[15px] leading-relaxed font-thin" style={{ color: "rgba(30,0,80,0.5)" }}>
                           {point}
                         </p>
                       </li>
@@ -273,11 +287,16 @@ export default function ProgrammeJourney() {
             {/* CTA destination node */}
             <motion.div
               ref={ctaRowRef}
-              initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+              initial={{
+                opacity: 0,
+                y: prefersReducedMotion ? 0 : 30,
+                filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)",
+              }}
               whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true, margin: "-10%" }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col md:flex-row gap-6 md:gap-12 mt-6 md:mt-10 items-start"
+              style={{ willChange: "opacity, transform, filter" }}
             >
               {/* Terminal node */}
               <div className="relative flex-shrink-0 mt-2 z-10 hidden md:flex">
@@ -323,12 +342,17 @@ export default function ProgrammeJourney() {
 
                 <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full md:w-auto">
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
+                    whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
                     className="w-full sm:w-auto flex items-center justify-center gap-2.5 text-white px-8 sm:px-10 py-4 rounded-full font-light text-[12px] md:text-[13px] uppercase tracking-widest transition-all group"
-                    style={{ background: ACCENT, boxShadow: "0 10px 30px rgba(123,47,255,0.25)" }}
-                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(123,47,255,0.4)"}
-                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(123,47,255,0.25)"}
+                    style={{
+                      background: ACCENT,
+                      boxShadow: "0 10px 30px rgba(123,47,255,0.25)",
+                      transform: "translateZ(0)",
+                      willChange: "transform",
+                    }}
+                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(123,47,255,0.4)")}
+                    onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(123,47,255,0.25)")}
                   >
                     Apply Now
                     <span className="text-base leading-none font-thin group-hover:translate-x-1 transition-transform">→</span>
@@ -339,11 +363,15 @@ export default function ProgrammeJourney() {
                     download
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ opacity: 1, x: 4 }}
+                    whileHover={prefersReducedMotion ? {} : { opacity: 1, x: 4 }}
                     className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-4 font-light text-[12px] md:text-[13px] uppercase tracking-widest transition-all group cursor-pointer"
-                    style={{ color: "rgba(30,0,80,0.4)" }}
-                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "rgba(30,0,80,0.75)"}
-                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(30,0,80,0.4)"}
+                    style={{
+                      color: "rgba(30,0,80,0.4)",
+                      transform: "translateZ(0)",
+                      willChange: "transform",
+                    }}
+                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(30,0,80,0.75)")}
+                    onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(30,0,80,0.4)")}
                   >
                     Download Brochure
                     <span className="text-base leading-none font-thin group-hover:translate-x-1 transition-transform">→</span>

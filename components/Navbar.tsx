@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Menu, X, ArrowRight } from "lucide-react";
 import Image from "next/image";
 
@@ -9,19 +9,23 @@ const ACCENT = "#7b2fff";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
+    // passive: true is the single most impactful scroll perf fix possible.
+    // Without it, the browser must wait for this handler to finish executing
+    // before it can paint the next scroll frame, because it assumes the handler
+    // might call preventDefault(). On touch devices this introduces a mandatory
+    // ~50–100ms delay on every scroll event — the root cause of "sticky" scroll
+    // on mobile. With passive: true the compositor scrolls immediately and our
+    // handler runs asynchronously.
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    document.body.style.overflow = isOpen ? "hidden" : "unset";
     return () => { document.body.style.overflow = "unset"; };
   }, [isOpen]);
 
@@ -35,7 +39,7 @@ export default function Navbar() {
   return (
     <>
       <motion.nav
-        initial={{ y: -20, opacity: 0 }}
+        initial={{ y: prefersReducedMotion ? 0 : -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="fixed top-0 w-full z-50 transition-all duration-500 py-4"
@@ -49,6 +53,11 @@ export default function Navbar() {
           boxShadow: scrolled
             ? "0 4px 24px rgba(123,47,255,0.1)"
             : "0 2px 12px rgba(123,47,255,0.05)",
+          // The navbar sits above everything and has a permanent backdrop-blur.
+          // Promoting it to its own compositor layer prevents the blur from
+          // interacting with page repaints below it on every scroll tick.
+          willChange: "opacity, transform",
+          transform: "translateZ(0)",
         }}
       >
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
@@ -66,7 +75,8 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8 xl:gap-10 text-[11px] uppercase tracking-widest font-light"
+          <div
+            className="hidden lg:flex items-center gap-8 xl:gap-10 text-[11px] uppercase tracking-widest font-light"
             style={{ color: "rgba(30,0,80,0.5)" }}
           >
             {navLinks.map((link) => (
@@ -75,8 +85,8 @@ export default function Navbar() {
                 href={link.href}
                 className="transition-colors duration-300"
                 style={{ color: "rgba(30,0,80,0.5)" }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = ACCENT}
-                onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(30,0,80,0.5)"}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = ACCENT)}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(30,0,80,0.5)")}
               >
                 {link.name}
               </a>
@@ -87,15 +97,17 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center">
             <motion.a
               href="/application"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
+              whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
               className="text-white text-[11px] font-light uppercase tracking-widest px-6 py-3 rounded-full flex items-center gap-2 transition-all duration-300 group"
               style={{
                 background: ACCENT,
                 boxShadow: "0 10px 30px rgba(123,47,255,0.25)",
+                transform: "translateZ(0)",
+                willChange: "transform",
               }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(123,47,255,0.4)"}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(123,47,255,0.25)"}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(123,47,255,0.4)")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(123,47,255,0.25)")}
             >
               Apply Now
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-300" />
@@ -107,8 +119,8 @@ export default function Navbar() {
             onClick={() => setIsOpen(!isOpen)}
             className="lg:hidden relative z-50 p-2 -mr-2 transition-colors focus:outline-none"
             style={{ color: "rgba(30,0,80,0.5)" }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = ACCENT}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(30,0,80,0.5)"}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = ACCENT)}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(30,0,80,0.5)")}
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -120,15 +132,19 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: prefersReducedMotion ? 0 : -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            exit={{ opacity: 0, y: prefersReducedMotion ? 0 : -10 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="fixed inset-0 z-40 flex flex-col pt-28 px-6 pb-10 overflow-y-auto lg:hidden"
             style={{
               background: "rgba(255,255,255,0.97)",
               backdropFilter: "blur(24px)",
               WebkitBackdropFilter: "blur(24px)",
+              // Overlay has its own heavy backdrop-blur — own compositor tile
+              // prevents it from dirtying the page layers beneath during open/close
+              willChange: "opacity, transform",
+              transform: "translateZ(0)",
             }}
           >
             {/* Mobile Links */}
@@ -138,16 +154,20 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{
+                    opacity: 0,
+                    x: prefersReducedMotion ? 0 : -20,
+                  }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + i * 0.1 }}
+                  transition={{ delay: prefersReducedMotion ? 0 : 0.1 + i * 0.1 }}
                   className="text-3xl sm:text-4xl font-thin tracking-tight pb-4 transition-colors duration-300"
                   style={{
                     color: "rgba(30,0,80,0.6)",
                     borderBottom: "1px solid rgba(123,47,255,0.1)",
+                    willChange: "opacity, transform",
                   }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = ACCENT}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(30,0,80,0.6)"}
+                  onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = ACCENT)}
+                  onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(30,0,80,0.6)")}
                 >
                   {link.name}
                 </motion.a>
@@ -156,19 +176,22 @@ export default function Navbar() {
 
             {/* Mobile CTA */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: prefersReducedMotion ? 0 : 0.4 }}
               className="mt-auto pt-10"
+              style={{ willChange: "opacity, transform" }}
             >
               <motion.a
                 href="/application"
                 onClick={() => setIsOpen(false)}
-                whileTap={{ scale: 0.98 }}
+                whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
                 className="w-full text-white text-[12px] font-light uppercase tracking-widest px-6 py-4 rounded-full flex justify-center items-center gap-3 transition-all"
                 style={{
                   background: ACCENT,
                   boxShadow: "0 10px 30px rgba(123,47,255,0.25)",
+                  transform: "translateZ(0)",
+                  willChange: "transform",
                 }}
               >
                 Start Application

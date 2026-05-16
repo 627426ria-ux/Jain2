@@ -1,17 +1,24 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 export default function CinematicBackground() {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none flex justify-center overflow-hidden bg-white">
-      
-      <motion.div 
-        animate={{ opacity: [0.6, 0.9, 0.6] }}
+    <div
+      className="fixed inset-0 z-0 pointer-events-none flex justify-center overflow-hidden bg-white"
+      style={{ isolation: "isolate" }}
+    >
+      {/* Pulsing radial glow — GPU-composited via will-change: opacity */}
+      <motion.div
+        animate={prefersReducedMotion ? {} : { opacity: [0.6, 0.9, 0.6] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-0 w-full h-[90vh] bg-[radial-gradient(ellipse_100%_100%_at_50%_-10%,rgba(91,31,209,0.45),transparent_70%)]" 
+        className="absolute top-0 w-full h-[90vh] bg-[radial-gradient(ellipse_100%_100%_at_50%_-10%,rgba(91,31,209,0.45),transparent_70%)]"
+        style={{ willChange: "opacity" }}
       />
 
-      <div 
+      {/* Conic gradient — own compositor layer via translateZ(0) */}
+      <div
         className="absolute top-[-20%] w-[150vw] h-[120vh] opacity-90"
         style={{
           background: `conic-gradient(from 180deg at 50% 10%, 
@@ -20,15 +27,28 @@ export default function CinematicBackground() {
             rgba(91, 31, 209, 0.25) 180deg, rgba(91, 31, 209, 0.35) 210deg, transparent 240deg, 
             rgba(91, 31, 209, 0.15) 270deg, rgba(91, 31, 209, 0.5) 300deg, rgba(91, 31, 209, 0.2) 330deg, 
             transparent 360deg)`,
-          maskImage: 'radial-gradient(circle at 50% 10%, black 20%, transparent 85%)',
-          WebkitMaskImage: 'radial-gradient(circle at 50% 10%, black 20%, transparent 85%)',
+          maskImage:
+            "radial-gradient(circle at 50% 10%, black 20%, transparent 85%)",
+          WebkitMaskImage:
+            "radial-gradient(circle at 50% 10%, black 20%, transparent 85%)",
+          transform: "translateZ(0)",
         }}
       />
-      
-      <div className="absolute inset-0 backdrop-blur-[40px]" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 80%)' }} />
-      
+
+      {/* Backdrop blur — most expensive layer; pinned to its own GPU tile */}
+      <div
+        className="absolute inset-0 backdrop-blur-[40px]"
+        style={{
+          maskImage: "linear-gradient(to bottom, transparent, black 80%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, transparent, black 80%)",
+          transform: "translateZ(0)",
+          willChange: "transform",
+        }}
+      />
+
+      {/* White fade — simple gradient, no extra hints needed */}
       <div className="absolute bottom-0 left-0 w-full h-[40vh] bg-gradient-to-t from-white via-white/80 to-transparent" />
-      
     </div>
   );
 }

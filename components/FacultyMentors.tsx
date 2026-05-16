@@ -1,5 +1,5 @@
 "use client";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, useReducedMotion } from "framer-motion";
 
 const mentors = [
   {
@@ -35,6 +35,8 @@ const mentors = [
 const ACCENT = "#7b2fff";
 
 export default function FacultyMentors() {
+  const prefersReducedMotion = useReducedMotion();
+
   const containerVars: Variants = {
     hidden: { opacity: 0 },
     show: {
@@ -44,7 +46,11 @@ export default function FacultyMentors() {
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+    hidden: {
+      opacity: 0,
+      y: prefersReducedMotion ? 0 : 20,
+      filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)",
+    },
     show: {
       opacity: 1,
       y: 0,
@@ -56,7 +62,7 @@ export default function FacultyMentors() {
   return (
     <section className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
 
-      {/* Background glow */}
+      {/* Background glow — static */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
         style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
@@ -72,7 +78,11 @@ export default function FacultyMentors() {
           viewport={{ once: true, margin: "-100px" }}
           className="flex flex-col items-center text-center mb-16 md:mb-20"
         >
-          <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
+          <motion.div
+            variants={itemVars}
+            className="flex items-center gap-3 mb-6"
+            style={{ willChange: "opacity, transform, filter" }}
+          >
             <div className="w-8 h-px" style={{ background: ACCENT }} />
             <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
               Elite Mentorship
@@ -83,7 +93,7 @@ export default function FacultyMentors() {
           <motion.h2
             variants={itemVars}
             className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
-            style={{ color: "#1a0050" }}
+            style={{ color: "#1a0050", willChange: "opacity, transform, filter" }}
           >
             Learn Directly From{" "}
             <br className="hidden md:block" />
@@ -108,6 +118,9 @@ export default function FacultyMentors() {
                 background: "#ffffff",
                 border: "1px solid rgba(123,47,255,0.15)",
                 boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
+                // Cards carry both entry animation AND hover translate — pre-promote
+                willChange: "opacity, transform, filter",
+                transform: "translateZ(0)",
               }}
             >
               {/* Hover border */}
@@ -116,12 +129,17 @@ export default function FacultyMentors() {
                 style={{ border: "1px solid rgba(123,47,255,0.3)" }}
               />
 
-              {/* Image */}
+              {/* Image
+                  grayscale→color + scale is a CSS filter transition — one of the most
+                  expensive hover effects possible. will-change: filter, transform tells
+                  the browser to keep this image on its own GPU tile so the filter
+                  transition never touches the main thread paint. */}
               <div className="relative w-full aspect-[3/4] sm:aspect-[4/5] overflow-hidden flex-shrink-0">
                 <img
                   src={mentor.imageUrl}
                   alt={mentor.name}
                   className="w-full h-full object-cover opacity-90 sm:grayscale sm:opacity-80 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:group-hover:grayscale-0 sm:group-hover:scale-110 sm:group-hover:opacity-95 group-hover:scale-110"
+                  style={{ willChange: "filter, transform" }}
                 />
                 {/* Light vignette */}
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/20 pointer-events-none" />
@@ -163,7 +181,6 @@ export default function FacultyMentors() {
                 >
                   {mentor.role}
                 </p>
-
               </div>
             </motion.div>
           ))}
@@ -171,7 +188,11 @@ export default function FacultyMentors() {
 
         {/* CTA Banner */}
         <motion.div
-          initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+          initial={{
+            opacity: 0,
+            y: prefersReducedMotion ? 0 : 30,
+            filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)",
+          }}
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
@@ -180,9 +201,10 @@ export default function FacultyMentors() {
             background: "#ffffff",
             border: "1px solid rgba(123,47,255,0.15)",
             boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
+            willChange: "opacity, transform, filter",
           }}
         >
-          {/* Ambient glow inside banner */}
+          {/* Ambient glows inside banner — static, no hints needed */}
           <div
             className="absolute top-0 right-0 w-64 h-64 pointer-events-none"
             style={{ background: "radial-gradient(ellipse at top right, rgba(123,47,255,0.06), transparent 65%)" }}
@@ -193,10 +215,7 @@ export default function FacultyMentors() {
           />
 
           <div className="relative z-10">
-            <h4
-              className="text-lg sm:text-2xl font-light mb-2"
-              style={{ color: "#1a0050" }}
-            >
+            <h4 className="text-lg sm:text-2xl font-light mb-2" style={{ color: "#1a0050" }}>
               Ready to be mentored by the best?
             </h4>
             <p
@@ -208,15 +227,23 @@ export default function FacultyMentors() {
           </div>
 
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
+            whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
             className="relative z-10 w-full md:w-auto flex-shrink-0 flex items-center justify-center gap-2.5 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-light text-[11px] sm:text-[13px] uppercase tracking-widest transition-all group"
             style={{
               background: ACCENT,
               boxShadow: "0 10px 30px rgba(123,47,255,0.25)",
+              transform: "translateZ(0)",
+              willChange: "transform",
             }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(123,47,255,0.4)"}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(123,47,255,0.25)"}
+            onMouseEnter={(e) =>
+              ((e.currentTarget as HTMLElement).style.boxShadow =
+                "0 15px 40px rgba(123,47,255,0.4)")
+            }
+            onMouseLeave={(e) =>
+              ((e.currentTarget as HTMLElement).style.boxShadow =
+                "0 10px 30px rgba(123,47,255,0.25)")
+            }
           >
             Apply Now
             <span className="text-base leading-none font-thin group-hover:translate-x-1 transition-transform">→</span>

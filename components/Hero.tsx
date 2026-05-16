@@ -1,7 +1,9 @@
 "use client";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, useReducedMotion } from "framer-motion";
 
 export default function Hero() {
+  const prefersReducedMotion = useReducedMotion();
+
   const containerVars: Variants = {
     hidden: { opacity: 0 },
     show: {
@@ -11,7 +13,11 @@ export default function Hero() {
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+    hidden: {
+      opacity: 0,
+      y: prefersReducedMotion ? 0 : 20,
+      filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)",
+    },
     show: {
       opacity: 1,
       y: 0,
@@ -38,10 +44,14 @@ export default function Hero() {
           style={{
             background: "rgba(123,47,255,0.08)",
             border: "1px solid rgba(123,47,255,0.2)",
+            willChange: "opacity, transform, filter",
           }}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shrink-0" />
-          <span className="text-[9px] sm:text-[12px] font-light tracking-widest uppercase" style={{ color: "rgba(80,20,160,0.7)" }}>
+          <span
+            className="text-[9px] sm:text-[12px] font-light tracking-widest uppercase"
+            style={{ color: "rgba(80,20,160,0.7)" }}
+          >
             Only 23 seats remaining — Closes June 20
           </span>
         </motion.div>
@@ -50,9 +60,15 @@ export default function Hero() {
         <motion.h1
           variants={itemVars}
           className="text-4xl sm:text-[3.2rem] md:text-[4.8rem] lg:text-[6rem] font-thin tracking-tight sm:tracking-[-0.03em] leading-[1.15] sm:leading-[1.05] mb-6 sm:mb-8"
-          style={{ color: "#1a0050" }}
+          style={{
+            color: "#1a0050",
+            willChange: "opacity, transform, filter",
+          }}
         >
-          <span className="font-light" style={{ color: "#7b2fff" }}>India's First</span> Work <br className="hidden sm:block" />
+          <span className="font-regular" style={{ color: "#7b2fff" }}>
+            India's First
+          </span>{" "}
+          Work <br className="hidden sm:block" />
           Integrated BCA Program
         </motion.h1>
 
@@ -60,28 +76,45 @@ export default function Hero() {
         <motion.p
           variants={itemVars}
           className="max-w-2xl text-[14px] sm:text-[16px] md:text-[18px] leading-relaxed sm:leading-[1.7] font-thin tracking-wide mb-8 sm:mb-10 px-2 sm:px-0"
-          style={{ color: "rgba(30,0,80,0.55)" }}
+          style={{
+            color: "rgba(30,0,80,0.55)",
+            willChange: "opacity, transform, filter",
+          }}
         >
           Earn a UGC-recognised BCA degree + 2 years of real industry experience
           while you study — not after.
         </motion.p>
 
         {/* CTA Buttons */}
-        <motion.div variants={itemVars} className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto max-w-[280px] sm:max-w-none mx-auto">
+        <motion.div
+          variants={itemVars}
+          className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto max-w-[280px] sm:max-w-none mx-auto"
+          style={{ willChange: "opacity, transform, filter" }}
+        >
           {/* Primary Button */}
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
+            whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
             className="w-full sm:w-auto justify-center text-white px-8 py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center gap-2.5 group"
             style={{
               background: "#7b2fff",
               boxShadow: "0 10px 30px rgba(123,47,255,0.35)",
+              transform: "translateZ(0)",
+              willChange: "transform",
             }}
-            onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 15px 40px rgba(123,47,255,0.55)")}
-            onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 10px 30px rgba(123,47,255,0.35)")}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.boxShadow =
+                "0 15px 40px rgba(123,47,255,0.55)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.boxShadow =
+                "0 10px 30px rgba(123,47,255,0.35)")
+            }
           >
             Apply now
-            <span className="text-base leading-none pb-[1px] font-thin group-hover:translate-x-1 transition-transform">{'→'}</span>
+            <span className="text-base leading-none pb-[1px] font-thin group-hover:translate-x-1 transition-transform">
+              {"→"}
+            </span>
           </motion.button>
 
           {/* Secondary Button — Download Brochure */}
@@ -90,14 +123,24 @@ export default function Hero() {
             download
             target="_blank"
             rel="noopener noreferrer"
-            whileHover={{ opacity: 1, x: 4 }}
+            whileHover={prefersReducedMotion ? {} : { opacity: 1, x: 4 }}
             className="w-full sm:w-auto justify-center px-6 py-4 font-light text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center gap-2.5 group cursor-pointer"
-            style={{ color: "rgba(123,47,255,0.5)" }}
-            onMouseEnter={e => (e.currentTarget.style.color = "rgba(123,47,255,1)")}
-            onMouseLeave={e => (e.currentTarget.style.color = "rgba(123,47,255,0.5)")}
+            style={{
+              color: "rgba(123,47,255,0.5)",
+              transform: "translateZ(0)",
+              willChange: "transform",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.color = "rgba(123,47,255,1)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.color = "rgba(123,47,255,0.5)")
+            }
           >
             Download brochure
-            <span className="text-base leading-none pb-[1px] font-thin group-hover:translate-x-1 transition-transform">{'→'}</span>
+            <span className="text-base leading-none pb-[1px] font-thin group-hover:translate-x-1 transition-transform">
+              {"→"}
+            </span>
           </motion.a>
         </motion.div>
       </motion.div>

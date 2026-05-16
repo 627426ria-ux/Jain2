@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { motion, AnimatePresence, Variants, useReducedMotion } from "framer-motion";
 
 const faqs = [
   {
@@ -53,6 +53,7 @@ const ACCENT = "#7b2fff";
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const prefersReducedMotion = useReducedMotion();
 
   const containerVars: Variants = {
     hidden: { opacity: 0 },
@@ -63,7 +64,12 @@ export default function FAQ() {
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, scale: 0.98, filter: "blur(5px)" },
+    hidden: {
+      opacity: 0,
+      y: prefersReducedMotion ? 0 : 20,
+      scale: prefersReducedMotion ? 1 : 0.98,
+      filter: prefersReducedMotion ? "blur(0px)" : "blur(5px)",
+    },
     show: {
       opacity: 1,
       y: 0,
@@ -76,7 +82,7 @@ export default function FAQ() {
   return (
     <section id="faq" className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
 
-      {/* Background glow */}
+      {/* Background glow — static */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
         style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
@@ -92,7 +98,11 @@ export default function FAQ() {
           viewport={{ once: true, margin: "-100px" }}
           className="flex flex-col items-center text-center mb-12 sm:mb-16"
         >
-          <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
+          <motion.div
+            variants={itemVars}
+            className="flex items-center gap-3 mb-6"
+            style={{ willChange: "opacity, transform, filter" }}
+          >
             <div className="w-8 h-px" style={{ background: ACCENT }} />
             <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
               Got Questions?
@@ -103,7 +113,7 @@ export default function FAQ() {
           <motion.h2
             variants={itemVars}
             className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
-            style={{ color: "#1a0050" }}
+            style={{ color: "#1a0050", willChange: "opacity, transform, filter" }}
           >
             Frequently Asked{" "}
             <span className="font-light" style={{ color: ACCENT }}>Questions</span>
@@ -134,6 +144,10 @@ export default function FAQ() {
                   boxShadow: isOpen
                     ? "0 4px 24px rgba(123,47,255,0.12), 0 8px 32px rgba(123,47,255,0.06)"
                     : "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
+                  // Each FAQ row swaps background/border/boxShadow on open — isolate its
+                  // paint tile so those repaints don't cascade into all 11 siblings
+                  willChange: "opacity, transform, filter",
+                  transform: "translateZ(0)",
                 }}
               >
                 <button
@@ -147,7 +161,7 @@ export default function FAQ() {
                     {faq.question}
                   </span>
 
-                  {/* Plus/Minus icon */}
+                  {/* Plus/Minus icon — rotates on every open/close */}
                   <div
                     className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-300"
                     style={{
@@ -169,6 +183,7 @@ export default function FAQ() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
+                      style={{ willChange: "transform" }}
                     >
                       <line x1="12" y1="5" x2="12" y2="19" />
                       <line x1="5" y1="12" x2="19" y2="12" />
@@ -176,6 +191,7 @@ export default function FAQ() {
                   </div>
                 </button>
 
+                {/* Accordion body — height animation only, no blur, stays as-is */}
                 <AnimatePresence>
                   {isOpen && (
                     <motion.div
@@ -200,12 +216,15 @@ export default function FAQ() {
 
         {/* Bottom CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mt-12 sm:mt-16 pt-8 sm:pt-10 text-center flex flex-col items-center"
-          style={{ borderTop: "1px solid rgba(123,47,255,0.1)" }}
+          style={{
+            borderTop: "1px solid rgba(123,47,255,0.1)",
+            willChange: "opacity, transform",
+          }}
         >
           <p
             className="text-[14px] sm:text-[15px] font-thin mb-5 sm:mb-6 px-4"
@@ -214,15 +233,23 @@ export default function FAQ() {
             Didn't find what you're looking for?
           </p>
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
+            whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
             className="w-full sm:w-auto text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center justify-center gap-2"
             style={{
               background: ACCENT,
               boxShadow: "0 10px 30px rgba(123,47,255,0.25)",
+              transform: "translateZ(0)",
+              willChange: "transform",
             }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(123,47,255,0.4)"}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(123,47,255,0.25)"}
+            onMouseEnter={(e) =>
+              ((e.currentTarget as HTMLElement).style.boxShadow =
+                "0 15px 40px rgba(123,47,255,0.4)")
+            }
+            onMouseLeave={(e) =>
+              ((e.currentTarget as HTMLElement).style.boxShadow =
+                "0 10px 30px rgba(123,47,255,0.25)")
+            }
           >
             Contact Support Team
             <span className="text-base leading-none font-thin">→</span>

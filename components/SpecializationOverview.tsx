@@ -1,5 +1,5 @@
 "use client";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, useReducedMotion } from "framer-motion";
 
 const specialisations = [
   {
@@ -27,46 +27,76 @@ const specialisations = [
 const ACCENT = "#7b2fff";
 
 export default function SpecialisationsOverview() {
+  const shouldReduceMotion = useReducedMotion();
+
+  // ── Variants ──────────────────────────────────────────────────────────────
+  // No blur — expensive GPU op that tanks low-end devices
   const containerVars: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+      transition: {
+        staggerChildren: shouldReduceMotion ? 0 : 0.08,
+        delayChildren: shouldReduceMotion ? 0 : 0.1,
+      },
     },
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 18 },
     show: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] as const },
+      transition: {
+        duration: shouldReduceMotion ? 0 : 0.7,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  };
+
+  // Bottom CTA — same treatment, no blur
+  const ctaVars: Variants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 18 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: shouldReduceMotion ? 0 : 0.7,
+        ease: [0.16, 1, 0.3, 1],
+        delay: shouldReduceMotion ? 0 : 0.15,
+      },
     },
   };
 
   return (
     <section className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
 
-      {/* Background glow */}
+      {/* Background glow — single, static */}
       <div
+        aria-hidden
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
-        style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(123,47,255,0.05), transparent 65%)",
+        }}
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
 
-        {/* Section Header */}
+        {/* ── Section Header ────────────────────────────────────────────── */}
         <motion.div
           variants={containerVars}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-80px" }}
           className="flex flex-col items-center text-center mb-16 md:mb-20"
         >
           <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
             <div className="w-8 h-px" style={{ background: ACCENT }} />
-            <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
+            <span
+              className="text-[11px] font-light tracking-[0.2em] uppercase"
+              style={{ color: ACCENT }}
+            >
               Specialisations Overview
             </span>
             <div className="w-8 h-px" style={{ background: ACCENT }} />
@@ -78,38 +108,40 @@ export default function SpecialisationsOverview() {
             style={{ color: "#1a0050" }}
           >
             Choose Your{" "}
-            <span className="font-light" style={{ color: ACCENT }}>Career Pathway</span>
+            <span className="font-light" style={{ color: ACCENT }}>
+              Career Pathway
+            </span>
           </motion.h2>
         </motion.div>
 
-        {/* 2×2 Card Grid */}
+        {/* ── 2×2 Card Grid ─────────────────────────────────────────────── */}
         <motion.div
           variants={containerVars}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-80px" }}
           className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5"
         >
           {specialisations.map((spec, index) => (
             <motion.div
               key={index}
               variants={itemVars}
-              className="group relative cursor-pointer rounded-2xl p-6 sm:p-8 md:p-10 flex flex-col justify-between transition-all duration-500 hover:-translate-y-1 overflow-hidden"
+              className="spec-card group relative cursor-pointer rounded-2xl p-6 sm:p-8 md:p-10 flex flex-col justify-between overflow-hidden"
               style={{
                 background: "#ffffff",
                 border: "1px solid rgba(123,47,255,0.15)",
-                boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
+                boxShadow:
+                  "0 2px 16px rgba(123,47,255,0.07), 0 8px 32px rgba(123,47,255,0.04)",
               }}
             >
-              {/* Hover glow */}
+              {/* Hover glow — CSS opacity only, no border duplication */}
               <div
+                aria-hidden
                 className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ background: "radial-gradient(ellipse at top right, rgba(123,47,255,0.06), transparent 60%)" }}
-              />
-              {/* Hover border */}
-              <div
-                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ border: "1px solid rgba(123,47,255,0.3)" }}
+                style={{
+                  background:
+                    "radial-gradient(ellipse at top right, rgba(123,47,255,0.07), transparent 60%)",
+                }}
               />
 
               {/* Top content */}
@@ -137,30 +169,10 @@ export default function SpecialisationsOverview() {
                   Target Career Roles
                 </p>
 
-                {/* Role pills */}
+                {/* Role pills — CSS hover, no JS style mutations */}
                 <div className="flex flex-wrap gap-2 sm:gap-2.5 mb-6 sm:mb-8">
                   {spec.roles.map((role, rIndex) => (
-                    <span
-                      key={rIndex}
-                      className="px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-light transition-all duration-300"
-                      style={{
-                        background: "rgba(123,47,255,0.05)",
-                        border: "1px solid rgba(123,47,255,0.15)",
-                        color: "rgba(30,0,80,0.45)",
-                      }}
-                      onMouseEnter={e => {
-                        const el = e.currentTarget as HTMLElement;
-                        el.style.background = "rgba(123,47,255,0.1)";
-                        el.style.borderColor = "rgba(123,47,255,0.4)";
-                        el.style.color = ACCENT;
-                      }}
-                      onMouseLeave={e => {
-                        const el = e.currentTarget as HTMLElement;
-                        el.style.background = "rgba(123,47,255,0.05)";
-                        el.style.borderColor = "rgba(123,47,255,0.15)";
-                        el.style.color = "rgba(30,0,80,0.45)";
-                      }}
-                    >
+                    <span key={rIndex} className="role-pill px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-light">
                       {role}
                     </span>
                   ))}
@@ -172,13 +184,14 @@ export default function SpecialisationsOverview() {
                   style={{ borderTop: "1px solid rgba(123,47,255,0.08)" }}
                 >
                   <span
-                    className="text-[12px] sm:text-[13px] font-light tracking-widest uppercase transition-colors duration-300"
+                    className="text-[12px] sm:text-[13px] font-light tracking-widest uppercase"
                     style={{ color: ACCENT }}
                   >
                     Download Syllabus
                   </span>
+                  {/* Arrow: CSS transform only — compositor, no JS */}
                   <span
-                    className="text-lg sm:text-xl transform group-hover:translate-x-2 transition-transform duration-300"
+                    className="cta-arrow text-lg sm:text-xl font-thin transition-transform duration-300"
                     style={{ color: ACCENT }}
                   >
                     →
@@ -189,12 +202,12 @@ export default function SpecialisationsOverview() {
           ))}
         </motion.div>
 
-        {/* Bottom CTA */}
+        {/* ── Bottom CTA ────────────────────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+          variants={ctaVars}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-60px" }}
           className="mt-12 sm:mt-16 text-center flex flex-col items-center"
         >
           <p
@@ -203,35 +216,83 @@ export default function SpecialisationsOverview() {
           >
             Not sure which path aligns best with your goals?
           </p>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest transition-all group cursor-pointer"
-            style={{
-              background: "#ffffff",
-              border: "1px solid rgba(123,47,255,0.2)",
-              color: "rgba(30,0,80,0.5)",
-              boxShadow: "0 2px 16px rgba(123,47,255,0.08)",
-            }}
-            onMouseEnter={e => {
-              const el = e.currentTarget as HTMLElement;
-              el.style.borderColor = "rgba(123,47,255,0.4)";
-              el.style.color = ACCENT;
-              el.style.boxShadow = "0 4px 24px rgba(123,47,255,0.15)";
-            }}
-            onMouseLeave={e => {
-              const el = e.currentTarget as HTMLElement;
-              el.style.borderColor = "rgba(123,47,255,0.2)";
-              el.style.color = "rgba(30,0,80,0.5)";
-              el.style.boxShadow = "0 2px 16px rgba(123,47,255,0.08)";
-            }}
-          >
+
+          {/* Button: CSS hover only — no JS style mutations, no whileHover scale
+              (scale on a button triggers layout on some browsers) */}
+          <button className="advisor-btn w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest cursor-pointer">
             Speak to an Academic Advisor
-            <span className="text-base leading-none font-thin group-hover:translate-x-1 transition-transform">→</span>
-          </motion.button>
+            <span className="btn-arrow text-base leading-none font-thin transition-transform duration-300">→</span>
+          </button>
         </motion.div>
 
       </div>
+
+      {/* ── Global CSS ── all hover states here, zero JS style mutations ── */}
+      <style>{`
+        /* Cards */
+        .spec-card {
+          transition: transform 0.4s cubic-bezier(0.16,1,0.3,1),
+                      box-shadow 0.4s ease,
+                      border-color 0.4s ease;
+        }
+        .spec-card:hover {
+          transform: translateY(-4px);
+          border-color: rgba(123,47,255,0.3);
+          box-shadow: 0 4px 24px rgba(123,47,255,0.12), 0 12px 40px rgba(123,47,255,0.07);
+        }
+
+        /* Arrow inside card */
+        .spec-card:hover .cta-arrow {
+          transform: translateX(6px);
+        }
+
+        /* Role pills */
+        .role-pill {
+          background: rgba(123,47,255,0.05);
+          border: 1px solid rgba(123,47,255,0.15);
+          color: rgba(30,0,80,0.45);
+          transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+        }
+        .role-pill:hover {
+          background: rgba(123,47,255,0.1);
+          border-color: rgba(123,47,255,0.38);
+          color: #7b2fff;
+        }
+
+        /* Advisor button */
+        .advisor-btn {
+          background: #ffffff;
+          border: 1px solid rgba(123,47,255,0.2);
+          color: rgba(30,0,80,0.5);
+          box-shadow: 0 2px 16px rgba(123,47,255,0.07);
+          transition: border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        }
+        .advisor-btn:hover {
+          border-color: rgba(123,47,255,0.4);
+          color: #7b2fff;
+          box-shadow: 0 4px 24px rgba(123,47,255,0.14);
+          transform: scale(1.02);
+        }
+        .advisor-btn:active {
+          transform: scale(0.98);
+        }
+        .advisor-btn:hover .btn-arrow {
+          transform: translateX(4px);
+        }
+
+        /* Respect system preference */
+        @media (prefers-reduced-motion: reduce) {
+          .spec-card,
+          .spec-card:hover,
+          .advisor-btn,
+          .advisor-btn:hover,
+          .advisor-btn:active {
+            transition: none;
+            transform: none;
+          }
+          .role-pill { transition: none; }
+        }
+      `}</style>
     </section>
   );
 }

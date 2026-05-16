@@ -1,68 +1,116 @@
 "use client";
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 
 export default function VideoSection() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
-  // Track the scroll progress of this specific section
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"], // Starts when top of section hits bottom of screen
+    offset: ["start end", "end start"],
   });
 
-  // 1. Perspective/Tilt: Makes it feel like it's being "dragged" from a 3D space
-  const rotateX = useTransform(scrollYProgress, [0, 0.5], [15, 0]);
-  
-  // 2. Scaling: Grows as it enters the viewport
-  const scale = useTransform(scrollYProgress, [0, 0.4], [0.8, 1]);
-  
-  // 3. Vertical Offset: The "Drag" speed (Parallax)
-  const y = useTransform(scrollYProgress, [0, 0.5], [100, 0]);
+  // All transforms compositor-only (rotateX, scale, translateY)
+  // Clamp ranges tightly so values settle fast — avoids long lerp tails on slow devices
+  const rotateX = useTransform(
+    scrollYProgress,
+    [0, 0.45],
+    shouldReduceMotion ? [0, 0] : [12, 0]
+  );
+  const scale = useTransform(
+    scrollYProgress,
+    [0, 0.38],
+    shouldReduceMotion ? [1, 1] : [0.82, 1]
+  );
+  const y = useTransform(
+    scrollYProgress,
+    [0, 0.45],
+    shouldReduceMotion ? [0, 0] : [80, 0]
+  );
 
   return (
-    <section 
+    <section
       ref={containerRef}
       className="relative z-20 w-full max-w-6xl mx-auto px-4 md:px-6 py-20"
-      style={{ perspective: "1000px" }} // Required for the 3D tilt
+      // perspective only needed when rotateX is active
+      style={shouldReduceMotion ? undefined : { perspective: "1200px" }}
     >
       <motion.div
-        style={{
-          rotateX,
-          scale,
-          y,
-        }}
-        className="relative w-full aspect-[16/9] md:aspect-[2.4/1] rounded-2xl md:rounded-[40px] overflow-hidden bg-[#02040a]/80 backdrop-blur-xl border border-white/10 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)] group cursor-pointer transition-shadow duration-500 hover:shadow-[#0066ff]/10"
+        style={{ rotateX, scale, y, willChange: "transform" }}
+        className="video-shell relative w-full aspect-[16/9] md:aspect-[2.4/1] rounded-2xl md:rounded-[40px] overflow-hidden bg-[#02040a]/80 backdrop-blur-xl border border-white/10 cursor-pointer"
       >
-        {/* ========================================== */}
-        {/* 🎬 YOUR VIDEO GOES HERE                    */}
-        {/* ========================================== */}
-        <video 
-          autoPlay 
-          loop 
-          muted 
+        {/* ── Video ──────────────────────────────────────────────────── */}
+        <video
+          autoPlay
+          loop
+          muted
           playsInline
-          // Change the src below to your video file path
-          src="/6145693-uhd_3840_2160_24fps.mp4" 
+          // preload="none" — defer until browser decides, saves bandwidth on low-end
+          preload="none"
+          src="/6145693-uhd_3840_2160_24fps.mp4"
           className="absolute inset-0 w-full h-full object-cover opacity-80"
         />
 
-        {/* --- THEMATIC ACCENTS --- */}
-        {/* Top Edge Glow */}
-        <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent z-10" />
-        
-        {/* Bottom Edge Glow (Updated to your Electric Blue #0066ff) */}
-        <div className="absolute bottom-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#0066ff]/40 to-transparent z-10" />
-        
-        {/* Deep Ambient Glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,102,255,0.08),transparent_70%)] pointer-events-none z-10" />
+        {/* ── Thematic accents — static, no JS ───────────────────────── */}
+        {/* Top edge */}
+        <div
+          aria-hidden
+          className="absolute top-0 inset-x-0 h-px z-10 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to right, transparent, rgba(255,255,255,0.18), transparent)",
+          }}
+        />
 
-        {/* --- PLAY BUTTON --- */}
-        
+        {/* Bottom edge */}
+        <div
+          aria-hidden
+          className="absolute bottom-0 inset-x-0 h-px z-10 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to right, transparent, rgba(0,102,255,0.38), transparent)",
+          }}
+        />
 
-        {/* Subtle Video Overlay Tint */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#02040a]/80 via-transparent to-transparent pointer-events-none z-10" />
+        {/* Ambient glow */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none z-10"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(0,102,255,0.07), transparent 70%)",
+          }}
+        />
+
+        {/* Bottom gradient overlay */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none z-10"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(2,4,10,0.78), transparent 55%)",
+          }}
+        />
       </motion.div>
+
+      <style>{`
+        /* Shadow on hover via CSS — no JS, no whileHover re-renders */
+        .video-shell {
+          box-shadow: 0 40px 100px -20px rgba(0,0,0,0.75);
+          transition: box-shadow 0.5s ease;
+        }
+        .video-shell:hover {
+          box-shadow: 0 40px 100px -20px rgba(0,0,0,0.75),
+                      0 0 60px -10px rgba(0,102,255,0.12);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .video-shell {
+            transition: none;
+          }
+        }
+      `}</style>
     </section>
   );
 }

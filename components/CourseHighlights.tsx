@@ -1,5 +1,5 @@
 "use client";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, useReducedMotion } from "framer-motion";
 
 const highlights = [
   {
@@ -72,6 +72,8 @@ const highlights = [
 ];
 
 export default function CourseHighlights() {
+  const prefersReducedMotion = useReducedMotion();
+
   const containerVars: Variants = {
     hidden: { opacity: 0 },
     show: {
@@ -81,7 +83,11 @@ export default function CourseHighlights() {
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+    hidden: {
+      opacity: 0,
+      y: prefersReducedMotion ? 0 : 20,
+      filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)",
+    },
     show: {
       opacity: 1,
       y: 0,
@@ -91,8 +97,9 @@ export default function CourseHighlights() {
   };
 
   return (
-    <section id = "highlights" className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
+    <section id="highlights" className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
 
+      {/* Background glow — static, no hints needed */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[60vw] md:h-[60vw] pointer-events-none z-0"
         style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
@@ -108,7 +115,11 @@ export default function CourseHighlights() {
           viewport={{ once: true, margin: "-100px" }}
           className="flex flex-col items-center text-center mb-16 md:mb-24"
         >
-          <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
+          <motion.div
+            variants={itemVars}
+            className="flex items-center gap-3 mb-6"
+            style={{ willChange: "opacity, transform, filter" }}
+          >
             <div className="w-8 h-px" style={{ background: "#7b2fff" }} />
             <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: "#7b2fff" }}>
               Course Highlights
@@ -119,7 +130,7 @@ export default function CourseHighlights() {
           <motion.h2
             variants={itemVars}
             className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
-            style={{ color: "#1a0050" }}
+            style={{ color: "#1a0050", willChange: "opacity, transform, filter" }}
           >
             The Ultimate{" "}
             <span className="font-light" style={{ color: "#7b2fff" }}>Advantage</span>
@@ -140,10 +151,12 @@ export default function CourseHighlights() {
               variants={itemVars}
               className="group relative rounded-3xl p-8 md:p-10 overflow-hidden transition-all duration-500 hover:-translate-y-1"
               style={{
-                /* Solid white card — clearly visible on white page via shadow+border */
                 background: "#ffffff",
                 border: "1px solid rgba(123,47,255,0.15)",
                 boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.06)",
+                // Pre-promote each card: stagger entry + hover translate both need a compositor layer
+                willChange: "opacity, transform, filter",
+                transform: "translateZ(0)",
               }}
             >
               {/* Per-card accent glow on hover */}

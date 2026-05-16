@@ -1,64 +1,91 @@
 "use client";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, useReducedMotion } from "framer-motion";
 
 const ACCENT = "#7b2fff";
 
+const SPECS = [
+  "Full Stack AI Dev",
+  "Gen AI & Tech Mgmt",
+  "Applied AI & Data Analytics",
+  "Design Technology",
+];
+
 export default function ProgrammeOverview() {
+  const shouldReduceMotion = useReducedMotion();
+
+  // ── Variants ──────────────────────────────────────────────────────────────
+  // Removed blur — GPU-intensive, tanks low-end devices
   const containerVars: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+      transition: {
+        staggerChildren: shouldReduceMotion ? 0 : 0.08,
+        delayChildren: shouldReduceMotion ? 0 : 0.1,
+      },
     },
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 18 },
     show: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] as const },
+      transition: { duration: shouldReduceMotion ? 0 : 0.7, ease: [0.16, 1, 0.3, 1] },
     },
   };
 
+  // ── Shared card styles (no redundant layered borders) ─────────────────────
   const card = {
     background: "#ffffff",
     border: "1px solid rgba(123,47,255,0.15)",
-    boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
+    boxShadow: "0 2px 16px rgba(123,47,255,0.07), 0 8px 32px rgba(123,47,255,0.04)",
   } as const;
 
   const cardAccent = {
-    background: "rgba(123,47,255,0.06)",
-    border: "1px solid rgba(123,47,255,0.25)",
-    boxShadow: "0 2px 16px rgba(123,47,255,0.1), 0 8px 32px rgba(123,47,255,0.06)",
+    background: "rgba(123,47,255,0.05)",
+    border: "1px solid rgba(123,47,255,0.22)",
+    boxShadow: "0 2px 16px rgba(123,47,255,0.09), 0 8px 32px rgba(123,47,255,0.05)",
   } as const;
+
+  // Transition for infinite animations — disabled when prefers-reduced-motion
+  const infTransition = (duration: number, delay = 0) =>
+    shouldReduceMotion
+      ? { duration: 0, repeat: 0 }
+      : { duration, repeat: Infinity, ease: "easeInOut" as const, delay };
 
   return (
     <section
       id="about"
       className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden"
     >
-      {/* Localised purple glow */}
+      {/* Background glow — single layer, no paint cost */}
       <div
+        aria-hidden
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[50vw] md:h-[50vw] pointer-events-none z-0"
-        style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(123,47,255,0.05), transparent 65%)",
+        }}
       />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6">
 
-        {/* ── Header ── */}
+        {/* ── Header ──────────────────────────────────────────────────────── */}
         <motion.div
           variants={containerVars}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-80px" }}
           className="flex flex-col md:flex-row gap-12 md:gap-24 mb-20"
         >
           <div className="flex-1">
             <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
               <div className="w-8 h-px" style={{ background: ACCENT }} />
-              <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
+              <span
+                className="text-[11px] font-light tracking-[0.2em] uppercase"
+                style={{ color: ACCENT }}
+              >
                 Programme Overview
               </span>
             </motion.div>
@@ -70,7 +97,9 @@ export default function ProgrammeOverview() {
             >
               Shaping the{" "}
               <br className="hidden md:block" />
-              <span className="font-light" style={{ color: ACCENT }}>Tech Innovators</span>{" "}
+              <span className="font-light" style={{ color: ACCENT }}>
+                Tech Innovators
+              </span>{" "}
               <br />
               of Tomorrow.
             </motion.h2>
@@ -82,60 +111,73 @@ export default function ProgrammeOverview() {
               className="text-base md:text-lg leading-[1.7] font-thin tracking-wide"
               style={{ color: "rgba(30,0,80,0.55)" }}
             >
-              In this new era, success isn't defined by a certificate — it's defined by skills, experience, and
-              confidence. At JAIN School of Future Technology, we prepare you not just for the world as it is,
-              but for the world as it's becoming.
+              In this new era, success isn't defined by a certificate — it's defined by
+              skills, experience, and confidence. At JAIN School of Future Technology, we
+              prepare you not just for the world as it is, but for the world as it's
+              becoming.
             </motion.p>
           </div>
         </motion.div>
 
-        {/* ── Bento Grid ── */}
+        {/* ── Bento Grid ──────────────────────────────────────────────────── */}
         <motion.div
           variants={containerVars}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-80px" }}
           className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5"
         >
 
-          {/* Card 1 — Degree Structure (wide) */}
+          {/* Card 1 — Degree Structure */}
           <motion.div
             variants={itemVars}
-            className="md:col-span-2 relative group overflow-hidden rounded-2xl p-8 md:p-10 hover:-translate-y-1 transition-all duration-500"
+            className="programme-card md:col-span-2 relative group overflow-hidden rounded-2xl p-8 md:p-10"
             style={card}
           >
-            {/* Hover glow */}
+            {/* Hover glow — CSS only, no JS, compositor layer */}
             <div
-              className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-              style={{ background: "radial-gradient(ellipse at top right, rgba(123,47,255,0.06), transparent 60%)" }}
-            />
-            <div
-              className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-              style={{ border: "1px solid rgba(123,47,255,0.3)" }}
+              aria-hidden
+              className="card-glow absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{
+                background:
+                  "radial-gradient(ellipse at top right, rgba(123,47,255,0.07), transparent 60%)",
+              }}
             />
 
-            {/* Animated blob — subtle on white */}
-            <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none opacity-10 group-hover:opacity-20 transition-opacity duration-700"
-              style={{ filter: "blur(60px)" }}>
-              <motion.div
-                animate={{ scale: [1, 1.2, 1], x: [0, -20, 0], y: [0, 20, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute inset-0 rounded-full"
-                style={{ background: ACCENT }}
-              />
-              <motion.div
-                animate={{ scale: [1, 1.5, 1], x: [0, 30, 0], y: [0, -10, 0] }}
-                transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute top-10 right-10 w-40 h-40 rounded-full"
-                style={{ background: "#b026ff" }}
-              />
-            </div>
+            {/* Decorative blob — transform only (compositor), opacity only */}
+            {!shouldReduceMotion && (
+              <div
+                aria-hidden
+                className="absolute top-0 right-0 w-64 h-64 pointer-events-none opacity-[0.07] group-hover:opacity-[0.14] transition-opacity duration-700"
+                style={{ filter: "blur(48px)" }}
+              >
+                <motion.div
+                  // translateX/Y — compositor only, no layout
+                  animate={{ scale: [1, 1.15, 1], x: [0, -16, 0], y: [0, 16, 0] }}
+                  transition={infTransition(8)}
+                  className="absolute inset-0 rounded-full"
+                  style={{ background: ACCENT, willChange: "transform" }}
+                />
+                <motion.div
+                  animate={{ scale: [1, 1.3, 1], x: [0, 24, 0], y: [0, -8, 0] }}
+                  transition={infTransition(10, 1)}
+                  className="absolute top-10 right-10 w-36 h-36 rounded-full"
+                  style={{ background: "#b026ff", willChange: "transform" }}
+                />
+              </div>
+            )}
 
             <div className="relative z-10">
-              <p className="text-[11px] font-light uppercase tracking-[0.2em] mb-4" style={{ color: "rgba(30,0,80,0.4)" }}>
+              <p
+                className="text-[11px] font-light uppercase tracking-[0.2em] mb-4"
+                style={{ color: "rgba(30,0,80,0.4)" }}
+              >
                 Degree Structure
               </p>
-              <h3 className="text-2xl md:text-3xl font-light mb-2" style={{ color: "#1a0050" }}>
+              <h3
+                className="text-2xl md:text-3xl font-light mb-2"
+                style={{ color: "#1a0050" }}
+              >
                 UGC-recognised BCA
               </h3>
               <p className="font-thin" style={{ color: "rgba(30,0,80,0.5)" }}>
@@ -147,65 +189,82 @@ export default function ProgrammeOverview() {
           {/* Card 2 — Applications */}
           <motion.div
             variants={itemVars}
-            className="relative overflow-hidden rounded-2xl p-8 md:p-10 flex flex-col justify-between group hover:-translate-y-1 transition-all duration-500"
+            className="relative overflow-hidden rounded-2xl p-8 md:p-10 flex flex-col justify-between group"
             style={cardAccent}
           >
-            {/* Hover border */}
-            <div
-              className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-              style={{ border: "1px solid rgba(123,47,255,0.4)" }}
-            />
-
-            {/* Scanning line */}
-            <motion.div
-              animate={{ top: ["-10%", "110%"] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              className="absolute left-0 right-0 h-px pointer-events-none"
-              style={{
-                background: `linear-gradient(to right, transparent, rgba(123,47,255,0.3), transparent)`,
-              }}
-            />
+            {/* Scanning line — translateY only (compositor), no top/bottom */}
+            {!shouldReduceMotion && (
+              <motion.div
+                aria-hidden
+                animate={{ y: ["-100%", "1100%"] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="absolute left-0 right-0 h-px pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(to right, transparent, rgba(123,47,255,0.28), transparent)",
+                  willChange: "transform",
+                }}
+              />
+            )}
 
             <div className="relative z-10">
-              <p className="text-[11px] font-light uppercase tracking-[0.2em] mb-4 flex items-center gap-2" style={{ color: ACCENT }}>
-                <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: ACCENT }} />
+              <p
+                className="text-[11px] font-light uppercase tracking-[0.2em] mb-4 flex items-center gap-2"
+                style={{ color: ACCENT }}
+              >
+                <span
+                  className="w-2 h-2 rounded-full animate-pulse"
+                  style={{ background: ACCENT }}
+                />
                 Now Open
               </p>
-              <h3 className="text-2xl font-light mb-2" style={{ color: "#1a0050" }}>Applications</h3>
+              <h3
+                className="text-2xl font-light mb-2"
+                style={{ color: "#1a0050" }}
+              >
+                Applications
+              </h3>
             </div>
 
             <div
               className="mt-8 pt-6 relative z-10"
               style={{ borderTop: "1px solid rgba(123,47,255,0.15)" }}
             >
-              <p className="text-[11px] font-light uppercase tracking-[0.2em] mb-1" style={{ color: "rgba(30,0,80,0.4)" }}>
+              <p
+                className="text-[11px] font-light uppercase tracking-[0.2em] mb-1"
+                style={{ color: "rgba(30,0,80,0.4)" }}
+              >
                 Start Date
               </p>
-              <p className="text-xl font-light" style={{ color: "#1a0050" }}>15 July 2026</p>
+              <p className="text-xl font-light" style={{ color: "#1a0050" }}>
+                15 July 2026
+              </p>
             </div>
           </motion.div>
 
-          {/* Card 3 — Specialisations (wide) */}
+          {/* Card 3 — Specialisations */}
           <motion.div
             variants={itemVars}
-            className="md:col-span-2 relative overflow-hidden rounded-2xl p-8 md:p-10 group hover:-translate-y-1 transition-all duration-500"
+            className="programme-card md:col-span-2 relative overflow-hidden rounded-2xl p-8 md:p-10 group"
             style={card}
           >
-            {/* Hover glow */}
             <div
-              className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-              style={{ background: "radial-gradient(ellipse at top left, rgba(123,47,255,0.06), transparent 60%)" }}
-            />
-            <div
-              className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-              style={{ border: "1px solid rgba(123,47,255,0.3)" }}
+              aria-hidden
+              className="card-glow absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{
+                background:
+                  "radial-gradient(ellipse at top left, rgba(123,47,255,0.07), transparent 60%)",
+              }}
             />
 
             <div className="relative z-10 flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-center">
 
               {/* Big number */}
               <div>
-                <p className="text-[11px] font-light uppercase tracking-[0.2em] mb-2" style={{ color: "rgba(30,0,80,0.4)" }}>
+                <p
+                  className="text-[11px] font-light uppercase tracking-[0.2em] mb-2"
+                  style={{ color: "rgba(30,0,80,0.4)" }}
+                >
                   Curriculum
                 </p>
                 <div
@@ -214,53 +273,50 @@ export default function ProgrammeOverview() {
                 >
                   4
                 </div>
-                <p className="text-lg font-light mt-1" style={{ color: "#1a0050" }}>Specialisations</p>
+                <p className="text-lg font-light mt-1" style={{ color: "#1a0050" }}>
+                  Specialisations
+                </p>
               </div>
 
               {/* Pathway list */}
               <div className="flex-1 relative pl-6">
+                {/* Static track line */}
                 <div
+                  aria-hidden
                   className="absolute left-1.5 top-2 bottom-2 w-px"
                   style={{ background: "rgba(123,47,255,0.15)" }}
                 />
 
-                {/* Traveling glowing dot */}
-                <motion.div
-                  animate={{ top: ["0%", "100%", "0%"] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute left-[3px] w-2 h-6 rounded-full z-10"
-                  style={{
-                    background: `linear-gradient(to bottom, transparent, ${ACCENT}, transparent)`,
-                    boxShadow: "0 0 8px rgba(123,47,255,0.5)",
-                  }}
-                />
+                {/* Traveling dot — translateY only */}
+                {!shouldReduceMotion && (
+                  <motion.div
+                    aria-hidden
+                    animate={{ y: ["0%", "100%", "0%"] }}
+                    transition={infTransition(6)}
+                    className="absolute left-[3px] w-2 h-6 rounded-full z-10"
+                    style={{
+                      background: `linear-gradient(to bottom, transparent, ${ACCENT}, transparent)`,
+                      boxShadow: "0 0 8px rgba(123,47,255,0.45)",
+                      willChange: "transform",
+                    }}
+                  />
+                )}
 
-                <ul className="space-y-4 md:space-y-5 text-sm md:text-base font-thin relative z-20" style={{ color: "rgba(30,0,80,0.5)" }}>
-                  {[
-                    "Full Stack AI Dev",
-                    "Gen AI & Tech Mgmt",
-                    "Applied AI & Data Analytics",
-                    "Design Technology",
-                  ].map((spec, i) => (
-                    <li key={i} className="flex items-center gap-4 group/item cursor-default">
+                {/* CSS hover — no inline JS style mutations */}
+                <ul
+                  className="space-y-4 md:space-y-5 text-sm md:text-base font-thin relative z-20"
+                  style={{ color: "rgba(30,0,80,0.5)" }}
+                >
+                  {SPECS.map((spec, i) => (
+                    <li key={i} className="spec-item flex items-center gap-4 cursor-default">
                       <div
-                        className="w-3 h-3 rounded-full flex-shrink-0 -ml-[13px] transition-all duration-300"
+                        className="spec-dot w-3 h-3 rounded-full flex-shrink-0 -ml-[13px] transition-all duration-300"
                         style={{
                           background: "rgba(123,47,255,0.05)",
                           border: "1.5px solid rgba(123,47,255,0.2)",
                         }}
-                        onMouseEnter={e => {
-                          (e.currentTarget as HTMLElement).style.borderColor = ACCENT;
-                          (e.currentTarget as HTMLElement).style.background = "rgba(123,47,255,0.15)";
-                        }}
-                        onMouseLeave={e => {
-                          (e.currentTarget as HTMLElement).style.borderColor = "rgba(123,47,255,0.2)";
-                          (e.currentTarget as HTMLElement).style.background = "rgba(123,47,255,0.05)";
-                        }}
                       />
-                      <span className="transition-colors duration-300 group-hover/item:text-[#7b2fff]">
-                        {spec}
-                      </span>
+                      <span className="transition-colors duration-300">{spec}</span>
                     </li>
                   ))}
                 </ul>
@@ -273,62 +329,113 @@ export default function ProgrammeOverview() {
 
             {/* Industry Network */}
             <div
-              className="flex-1 relative overflow-hidden rounded-2xl p-8 group hover:-translate-y-1 transition-all duration-500"
+              className="programme-card flex-1 relative overflow-hidden rounded-2xl p-8 group"
               style={card}
             >
               <div
-                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ background: "radial-gradient(ellipse at top left, rgba(123,47,255,0.06), transparent 60%)" }}
-              />
-              <div
-                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ border: "1px solid rgba(123,47,255,0.3)" }}
+                aria-hidden
+                className="card-glow absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                  background:
+                    "radial-gradient(ellipse at top left, rgba(123,47,255,0.07), transparent 60%)",
+                }}
               />
               <div className="relative z-10">
-                <p className="text-[11px] font-light uppercase tracking-[0.2em] mb-2" style={{ color: "rgba(30,0,80,0.4)" }}>
+                <p
+                  className="text-[11px] font-light uppercase tracking-[0.2em] mb-2"
+                  style={{ color: "rgba(30,0,80,0.4)" }}
+                >
                   Industry Network
                 </p>
-                <div className="text-4xl font-thin mb-1" style={{ color: ACCENT }}>50+</div>
-                <p className="text-sm font-light" style={{ color: "rgba(30,0,80,0.55)" }}>Industry Advisors</p>
+                <div className="text-4xl font-thin mb-1" style={{ color: ACCENT }}>
+                  50+
+                </div>
+                <p className="text-sm font-light" style={{ color: "rgba(30,0,80,0.55)" }}>
+                  Industry Advisors
+                </p>
               </div>
             </div>
 
             {/* Placements */}
             <div
-              className="flex-1 relative overflow-hidden rounded-2xl p-8 group hover:-translate-y-1 transition-all duration-500"
+              className="programme-card flex-1 relative overflow-hidden rounded-2xl p-8 group"
               style={card}
             >
               <div
-                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ background: "radial-gradient(ellipse at top left, rgba(123,47,255,0.06), transparent 60%)" }}
-              />
-              <div
-                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ border: "1px solid rgba(123,47,255,0.3)" }}
+                aria-hidden
+                className="card-glow absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                  background:
+                    "radial-gradient(ellipse at top left, rgba(123,47,255,0.07), transparent 60%)",
+                }}
               />
 
-              {/* Radar pulse */}
+              {/* Radar pulse — CSS animation, no JS */}
               <div
+                aria-hidden
                 className="absolute bottom-8 right-8 w-3 h-3 rounded-full z-10"
-                style={{ background: ACCENT, boxShadow: "0 0 10px rgba(123,47,255,0.4)" }}
+                style={{
+                  background: ACCENT,
+                  boxShadow: "0 0 10px rgba(123,47,255,0.35)",
+                }}
               >
-                <div className="absolute inset-0 rounded-full animate-ping" style={{ background: ACCENT, opacity: 0.3 }} />
-                <div className="absolute -inset-4 rounded-full animate-ping" style={{ border: "1px solid rgba(123,47,255,0.15)", animationDuration: "2s" }} />
+                <div
+                  className="absolute inset-0 rounded-full animate-ping"
+                  style={{ background: ACCENT, opacity: 0.28 }}
+                />
+                <div
+                  className="absolute -inset-4 rounded-full animate-ping"
+                  style={{
+                    border: "1px solid rgba(123,47,255,0.15)",
+                    animationDuration: "2s",
+                    animationDelay: "0.5s",
+                  }}
+                />
               </div>
 
               <div className="relative z-10">
-                <p className="text-[11px] font-light uppercase tracking-[0.2em] mb-2" style={{ color: "rgba(30,0,80,0.4)" }}>
+                <p
+                  className="text-[11px] font-light uppercase tracking-[0.2em] mb-2"
+                  style={{ color: "rgba(30,0,80,0.4)" }}
+                >
                   Placements
                 </p>
-                <p className="text-lg font-light mb-1" style={{ color: "#1a0050" }}>Infopark, Kochi</p>
-                <p className="text-sm font-thin" style={{ color: "rgba(30,0,80,0.5)" }}>Leading tech companies</p>
+                <p className="text-lg font-light mb-1" style={{ color: "#1a0050" }}>
+                  Infopark, Kochi
+                </p>
+                <p className="text-sm font-thin" style={{ color: "rgba(30,0,80,0.5)" }}>
+                  Leading tech companies
+                </p>
               </div>
             </div>
 
           </motion.div>
-
         </motion.div>
       </div>
+
+      {/* ── Global CSS for hover states (no JS style mutations) ── */}
+      <style>{`
+        .programme-card {
+          transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease;
+        }
+        .programme-card:hover {
+          transform: translateY(-4px);
+        }
+
+        .spec-item:hover .spec-dot {
+          border-color: #7b2fff;
+          background: rgba(123,47,255,0.14);
+        }
+        .spec-item:hover span {
+          color: #7b2fff;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .programme-card { transition: none; }
+          .programme-card:hover { transform: none; }
+          .animate-pulse, .animate-ping { animation: none; }
+        }
+      `}</style>
     </section>
   );
 }
