@@ -44,9 +44,9 @@ export default function ProgrammeJourney() {
   const containerRef = useRef<HTMLDivElement>(null);
   const ctaRowRef = useRef<HTMLDivElement>(null);
   const [lineCutoff, setLineCutoff] = useState(140);
-  const [isMobile, setIsMobile] = useState(false);
-  const prefersReducedMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotion();
 
+  // Desktop timeline line scroll progress
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start center", "end center"],
@@ -55,16 +55,11 @@ export default function ProgrammeJourney() {
   const scaleY = useTransform(
     scrollYProgress,
     [0, 1],
-    prefersReducedMotion ? [1, 1] : [0, 1]
+    shouldReduceMotion ? [1, 1] : [0, 1]
   );
 
   useEffect(() => {
-    // Check if device is mobile to simplify animations
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile(); // Check immediately on mount
-
     const updateLayout = () => {
-      checkMobile();
       if (ctaRowRef.current) {
         setLineCutoff(ctaRowRef.current.offsetHeight - 48);
       }
@@ -74,26 +69,27 @@ export default function ProgrammeJourney() {
     return () => window.removeEventListener("resize", updateLayout);
   }, []);
 
+  // ── Variants (Matching the optimized Specialisations pattern) ──
   const containerVars: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+      transition: {
+        staggerChildren: shouldReduceMotion ? 0 : 0.08,
+        delayChildren: shouldReduceMotion ? 0 : 0.1,
+      },
     },
   };
 
   const itemVars: Variants = {
-    hidden: {
-      opacity: 0,
-      // If mobile or reduced motion is preferred, strip out Y-movement and Blur completely
-      y: prefersReducedMotion || isMobile ? 0 : 20,
-      filter: prefersReducedMotion || isMobile ? "blur(0px)" : "blur(8px)",
-    },
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 18 },
     show: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] as const },
+      transition: {
+        duration: shouldReduceMotion ? 0 : 0.7,
+        ease: [0.16, 1, 0.3, 1],
+      },
     },
   };
 
@@ -102,27 +98,22 @@ export default function ProgrammeJourney() {
 
       {/* Background glow — static */}
       <div
+        aria-hidden
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
-        style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
+        style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.05), transparent 65%)" }}
       />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6">
 
-        {/* Section Header */}
+        {/* ── Section Header ── */}
         <motion.div
           variants={containerVars}
           initial="hidden"
           whileInView="show"
-          // FIX: Protected horizontal detection area
-          viewport={{ once: true, margin: "-50px 0px" }}
+          viewport={{ once: true, margin: "-50px" }}
           className="flex flex-col items-center text-center mb-16 md:mb-20"
         >
-          <motion.div
-            variants={itemVars}
-            className="flex items-center gap-3 mb-6"
-            // FIX: Removed filter from willChange
-            style={{ willChange: "opacity, transform" }}
-          >
+          <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
             <div className="w-8 h-px" style={{ background: ACCENT }} />
             <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
               3-Year Roadmap
@@ -133,19 +124,19 @@ export default function ProgrammeJourney() {
           <motion.h2
             variants={itemVars}
             className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
-            // FIX: Removed filter from willChange
-            style={{ color: "#1a0050", willChange: "opacity, transform" }}
+            style={{ color: "#1a0050" }}
           >
             Your Path to{" "}
             <span className="font-light" style={{ color: ACCENT }}>Industry Leadership</span>
           </motion.h2>
         </motion.div>
 
-        {/* Timeline */}
+        {/* ── Timeline ── */}
         <div ref={containerRef} className="relative w-full max-w-4xl mx-auto">
 
           {/* Scroll-driven timeline line (Hidden on Mobile) */}
           <div
+            aria-hidden
             className="hidden md:block absolute left-[39px] top-[40px] w-px z-0"
             style={{ bottom: `${lineCutoff}px` }}
           >
@@ -157,74 +148,52 @@ export default function ProgrammeJourney() {
                 transformOrigin: "top",
                 background: ACCENT,
                 boxShadow: `0 0 12px rgba(123,47,255,0.4), 0 0 30px rgba(123,47,255,0.2)`,
-                willChange: "transform",
-                transform: "translateZ(0)",
               }}
             />
           </div>
 
-          <div className="flex flex-col gap-10 sm:gap-16 md:gap-8 relative z-10">
-
+          <motion.div
+            variants={containerVars}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+            className="flex flex-col gap-10 sm:gap-16 md:gap-8 relative z-10"
+          >
             {journeySteps.map((step, index) => (
-              <div key={index} className="flex flex-col sm:flex-row gap-6 sm:gap-8 md:gap-12 group">
+              <div key={index} className="flex flex-col sm:flex-row gap-6 sm:gap-8 md:gap-12">
 
                 {/* Timeline node */}
-                <div className="relative flex-shrink-0 mt-0 sm:mt-2 z-10">
-                  <motion.div
-                    // Simplified mobile scale-in logic
-                    initial={{ scale: prefersReducedMotion || isMobile ? 1 : 0, opacity: 0 }}
-                    whileInView={{ scale: 1, opacity: 1 }}
-                    viewport={{ once: true, margin: "-50px 0px" }}
-                    transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                    className="w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center relative transition-all duration-500"
+                <motion.div variants={itemVars} className="relative flex-shrink-0 mt-0 sm:mt-2 z-10">
+                  <div
+                    className="timeline-node w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center relative"
                     style={{
                       background: "#ffffff",
                       border: "1px solid rgba(123,47,255,0.22)",
-                      willChange: "transform, opacity",
                     }}
                   >
-                    {/* Hover ring */}
-                    <div
-                      className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                      style={{
-                        border: `1.5px solid rgba(123,47,255,0.4)`,
-                        boxShadow: "0 0 20px rgba(123,47,255,0.15)",
-                      }}
-                    />
-                    <span
-                      className="font-light text-base md:text-xl relative z-10"
-                      style={{ color: ACCENT }}
-                    >
+                    {/* Hover ring (CSS) */}
+                    <div className="node-ring absolute inset-0 rounded-full pointer-events-none" />
+                    <span className="font-light text-base md:text-xl relative z-10" style={{ color: ACCENT }}>
                       0{index + 1}
                     </span>
-                  </motion.div>
-                </div>
+                  </div>
+                </motion.div>
 
                 {/* Card */}
                 <motion.div
                   variants={itemVars}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true, margin: "-50px 0px" }}
-                  className="group/card flex-1 w-full relative rounded-2xl p-6 md:p-8 transition-all duration-500 hover:-translate-y-1 overflow-hidden"
+                  className="journey-card flex-1 w-full relative rounded-2xl p-6 md:p-8 overflow-hidden cursor-default"
                   style={{
                     background: "#ffffff",
                     border: "1px solid rgba(123,47,255,0.15)",
-                    boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
-                    // FIX: Removed filter from willChange
-                    willChange: "opacity, transform",
-                    transform: "translateZ(0)",
+                    boxShadow: "0 2px 16px rgba(123,47,255,0.07), 0 8px 32px rgba(123,47,255,0.04)",
                   }}
                 >
-                  {/* Hover glow */}
+                  {/* Hover glow (CSS) */}
                   <div
-                    className="absolute inset-0 rounded-2xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none"
+                    aria-hidden
+                    className="card-glow absolute inset-0 rounded-2xl pointer-events-none"
                     style={{ background: "radial-gradient(ellipse at top left, rgba(123,47,255,0.06), transparent 60%)" }}
-                  />
-                  {/* Hover border */}
-                  <div
-                    className="absolute inset-0 rounded-2xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none"
-                    style={{ border: "1px solid rgba(123,47,255,0.3)" }}
                   />
 
                   {/* Card header */}
@@ -246,25 +215,15 @@ export default function ProgrammeJourney() {
                   {/* Points */}
                   <ul className="relative z-10 space-y-4 mb-6">
                     {step.points.map((point, i) => (
-                      <li key={i} className="flex items-start gap-4">
+                      <li key={i} className="flex items-start gap-4 group/point">
                         <div
-                          className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-0.5"
+                          className="point-icon flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-0.5"
                           style={{
-                            background: "rgba(123,47,255,0.08)",
-                            border: "1px solid rgba(123,47,255,0.22)",
+                            background: "rgba(123,47,255,0.05)",
+                            border: "1px solid rgba(123,47,255,0.15)",
                           }}
                         >
-                          <svg
-                            width="13"
-                            height="13"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke={ACCENT}
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="opacity-70 group-hover/card:opacity-100 transition-opacity duration-300"
-                          >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={ACCENT} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70">
                             <polyline points="20 6 9 17 4 12" />
                           </svg>
                         </div>
@@ -290,20 +249,11 @@ export default function ProgrammeJourney() {
               </div>
             ))}
 
-            {/* CTA destination node */}
+            {/* ── CTA destination node ── */}
             <motion.div
               ref={ctaRowRef}
-              initial={{
-                opacity: 0,
-                y: prefersReducedMotion || isMobile ? 0 : 30,
-                filter: prefersReducedMotion || isMobile ? "blur(0px)" : "blur(8px)",
-              }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, margin: "-50px 0px" }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              variants={itemVars}
               className="flex flex-col md:flex-row gap-6 md:gap-12 mt-6 md:mt-10 items-start"
-              // FIX: Removed filter from willChange
-              style={{ willChange: "opacity, transform" }}
             >
               {/* Terminal node (Hidden on mobile) */}
               <div className="relative flex-shrink-0 mt-2 z-10 hidden md:flex">
@@ -315,16 +265,7 @@ export default function ProgrammeJourney() {
                     boxShadow: "0 2px 20px rgba(123,47,255,0.12)",
                   }}
                 >
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill={ACCENT}
-                    stroke={ACCENT}
-                    strokeWidth="0.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill={ACCENT} stroke={ACCENT} strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round">
                     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                   </svg>
                 </div>
@@ -348,48 +289,123 @@ export default function ProgrammeJourney() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full md:w-auto">
-                  <motion.button
-                    whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
-                    whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2.5 text-white px-8 sm:px-10 py-4 rounded-full font-light text-[12px] md:text-[13px] uppercase tracking-widest transition-all group"
-                    style={{
-                      background: ACCENT,
-                      boxShadow: "0 10px 30px rgba(123,47,255,0.25)",
-                      transform: "translateZ(0)",
-                      willChange: "transform",
-                    }}
-                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(123,47,255,0.4)")}
-                    onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(123,47,255,0.25)")}
+                  {/* Primary CTA Button */}
+                  <button
+                    className="cta-btn-primary w-full sm:w-auto flex items-center justify-center gap-2.5 text-white px-8 sm:px-10 py-4 rounded-full font-light text-[12px] md:text-[13px] uppercase tracking-widest cursor-pointer"
+                    style={{ background: ACCENT }}
                   >
                     Apply Now
-                    <span className="text-base leading-none font-thin group-hover:translate-x-1 transition-transform">→</span>
-                  </motion.button>
+                    <span className="btn-arrow text-base leading-none font-thin transition-transform duration-300">→</span>
+                  </button>
 
-                  <motion.a
+                  {/* Secondary CTA Button */}
+                  <a
                     href={brochureDownloadUrl}
                     download
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={prefersReducedMotion ? {} : { opacity: 1, x: 4 }}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-4 font-light text-[12px] md:text-[13px] uppercase tracking-widest transition-all group cursor-pointer"
-                    style={{
-                      color: "rgba(30,0,80,0.4)",
-                      transform: "translateZ(0)",
-                      willChange: "transform",
-                    }}
-                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(30,0,80,0.75)")}
-                    onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(30,0,80,0.4)")}
+                    className="cta-btn-secondary w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-4 font-light text-[12px] md:text-[13px] uppercase tracking-widest cursor-pointer"
+                    style={{ color: "rgba(30,0,80,0.45)" }}
                   >
                     Download Brochure
-                    <span className="text-base leading-none font-thin group-hover:translate-x-1 transition-transform">→</span>
-                  </motion.a>
+                    <span className="btn-arrow text-base leading-none font-thin transition-transform duration-300">→</span>
+                  </a>
                 </div>
               </div>
             </motion.div>
 
-          </div>
+          </motion.div>
         </div>
       </div>
+
+      {/* ── Global CSS ── all hover states here, zero JS style mutations ── */}
+      <style>{`
+        /* Card Hover */
+        .journey-card {
+          transition: transform 0.4s cubic-bezier(0.16,1,0.3,1),
+                      box-shadow 0.4s ease,
+                      border-color 0.4s ease;
+        }
+        .journey-card:hover {
+          transform: translateY(-4px);
+          border-color: rgba(123,47,255,0.3);
+          box-shadow: 0 4px 24px rgba(123,47,255,0.12), 0 12px 40px rgba(123,47,255,0.07);
+        }
+
+        /* Card Inner Glow */
+        .card-glow {
+          opacity: 0;
+          transition: opacity 0.5s ease;
+        }
+        .journey-card:hover .card-glow {
+          opacity: 1;
+        }
+
+        /* Timeline Node Hover (Triggered when hovering over card or node) */
+        .node-ring {
+          border: 1.5px solid rgba(123,47,255,0.4);
+          box-shadow: 0 0 20px rgba(123,47,255,0.15);
+          opacity: 0;
+          transition: opacity 0.5s ease;
+        }
+        .journey-card:hover ~ .timeline-node .node-ring,
+        .timeline-node:hover .node-ring {
+          opacity: 1;
+        }
+
+        /* List Item Icon Hover */
+        .point-icon {
+          transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .journey-card:hover .point-icon {
+          background: rgba(123,47,255,0.08) !important;
+          border-color: rgba(123,47,255,0.22) !important;
+        }
+        .journey-card:hover .point-icon svg {
+          opacity: 1 !important;
+        }
+
+        /* Primary CTA */
+        .cta-btn-primary {
+          box-shadow: 0 10px 30px rgba(123,47,255,0.25);
+          transition: box-shadow 0.3s ease, transform 0.2s ease;
+        }
+        .cta-btn-primary:hover {
+          box-shadow: 0 15px 40px rgba(123,47,255,0.4);
+          transform: scale(1.02);
+        }
+        .cta-btn-primary:active {
+          transform: scale(0.98);
+        }
+        .cta-btn-primary:hover .btn-arrow {
+          transform: translateX(4px);
+        }
+
+        /* Secondary CTA */
+        .cta-btn-secondary {
+          transition: color 0.3s ease, transform 0.2s ease;
+        }
+        .cta-btn-secondary:hover {
+          color: rgba(30,0,80,0.75) !important;
+        }
+        .cta-btn-secondary:hover .btn-arrow {
+          transform: translateX(4px);
+        }
+
+        /* Respect system preference */
+        @media (prefers-reduced-motion: reduce) {
+          .journey-card,
+          .journey-card:hover,
+          .cta-btn-primary,
+          .cta-btn-primary:hover,
+          .cta-btn-primary:active,
+          .cta-btn-secondary,
+          .cta-btn-secondary:hover {
+            transition: none;
+            transform: none;
+          }
+        }
+      `}</style>
     </section>
   );
 }
