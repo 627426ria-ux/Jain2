@@ -114,7 +114,7 @@ export default function VideoSection() {
           muted
           playsInline
           preload="none"
-          src="/6145693-uhd_3840_2160_24fps.mp4"
+          src=""
           className="absolute inset-0 w-full h-full object-cover opacity-80"
         />
 
