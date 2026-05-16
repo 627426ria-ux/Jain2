@@ -53,29 +53,29 @@ const ACCENT = "#7b2fff";
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const prefersReducedMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotion();
 
+  // ── Optimized Variants: No Blurs, No Hydration Mismatches ──
   const containerVars: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+      transition: { 
+        staggerChildren: shouldReduceMotion ? 0 : 0.08, 
+        delayChildren: shouldReduceMotion ? 0 : 0.1 
+      },
     },
   };
 
   const itemVars: Variants = {
     hidden: {
       opacity: 0,
-      y: prefersReducedMotion ? 0 : 20,
-      scale: prefersReducedMotion ? 1 : 0.98,
-      filter: prefersReducedMotion ? "blur(0px)" : "blur(5px)",
+      y: shouldReduceMotion ? 0 : 18,
     },
     show: {
       opacity: 1,
       y: 0,
-      scale: 1,
-      filter: "blur(0px)",
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
+      transition: { duration: shouldReduceMotion ? 0 : 0.7, ease: [0.16, 1, 0.3, 1] },
     },
   };
 
@@ -84,6 +84,7 @@ export default function FAQ() {
 
       {/* Background glow — static */}
       <div
+        aria-hidden
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
         style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
       />
@@ -95,13 +96,15 @@ export default function FAQ() {
           variants={containerVars}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+          // FIX: Changed to "-50px 0px" to protect mobile X-axis intersection
+          viewport={{ once: true, margin: "-50px 0px" }}
           className="flex flex-col items-center text-center mb-12 sm:mb-16"
         >
           <motion.div
             variants={itemVars}
             className="flex items-center gap-3 mb-6"
-            style={{ willChange: "opacity, transform, filter" }}
+            // FIX: Removed filter from willChange
+            style={{ willChange: "opacity, transform" }}
           >
             <div className="w-8 h-px" style={{ background: ACCENT }} />
             <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
@@ -113,7 +116,8 @@ export default function FAQ() {
           <motion.h2
             variants={itemVars}
             className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
-            style={{ color: "#1a0050", willChange: "opacity, transform, filter" }}
+            // FIX: Removed filter from willChange
+            style={{ color: "#1a0050", willChange: "opacity, transform" }}
           >
             Frequently Asked{" "}
             <span className="font-light" style={{ color: ACCENT }}>Questions</span>
@@ -125,7 +129,7 @@ export default function FAQ() {
           variants={containerVars}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-50px 0px" }}
           className="flex flex-col gap-3 sm:gap-4"
         >
           {faqs.map((faq, index) => {
@@ -144,15 +148,14 @@ export default function FAQ() {
                   boxShadow: isOpen
                     ? "0 4px 24px rgba(123,47,255,0.12), 0 8px 32px rgba(123,47,255,0.06)"
                     : "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
-                  // Each FAQ row swaps background/border/boxShadow on open — isolate its
-                  // paint tile so those repaints don't cascade into all 11 siblings
-                  willChange: "opacity, transform, filter",
+                  // FIX: Removed filter from willChange
+                  willChange: "opacity, transform",
                   transform: "translateZ(0)",
                 }}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="w-full flex items-center justify-between p-5 sm:p-6 md:p-8 text-left focus:outline-none"
+                  className="w-full flex items-center justify-between p-5 sm:p-6 md:p-8 text-left focus:outline-none cursor-pointer"
                 >
                   <span
                     className="text-[15px] sm:text-[16px] md:text-[17px] font-light pr-6 sm:pr-8 transition-colors duration-300"
@@ -161,7 +164,7 @@ export default function FAQ() {
                     {faq.question}
                   </span>
 
-                  {/* Plus/Minus icon — rotates on every open/close */}
+                  {/* Plus/Minus icon */}
                   <div
                     className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-300"
                     style={{
@@ -173,7 +176,7 @@ export default function FAQ() {
                     }}
                   >
                     <motion.svg
-                      animate={{ rotate: isOpen ? 45 : 0 }}
+                      animate={shouldReduceMotion ? {} : { rotate: isOpen ? 45 : 0 }}
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                       width="14"
                       height="14"
@@ -191,14 +194,15 @@ export default function FAQ() {
                   </div>
                 </button>
 
-                {/* Accordion body — height animation only, no blur, stays as-is */}
-                <AnimatePresence>
+                {/* Accordion body */}
+                <AnimatePresence initial={false}>
                   {isOpen && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ overflow: "hidden" }}
                     >
                       <div
                         className="px-5 pb-6 sm:px-6 sm:pb-8 md:px-8 text-[13px] sm:text-[14px] md:text-[15px] leading-relaxed font-thin"
@@ -216,9 +220,9 @@ export default function FAQ() {
 
         {/* Bottom CTA */}
         <motion.div
-          initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 20 }}
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-50px 0px" }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mt-12 sm:mt-16 pt-8 sm:pt-10 text-center flex flex-col items-center"
           style={{
@@ -232,31 +236,55 @@ export default function FAQ() {
           >
             Didn't find what you're looking for?
           </p>
-          <motion.button
-            whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
-            whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
-            className="w-full sm:w-auto text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center justify-center gap-2"
-            style={{
-              background: ACCENT,
-              boxShadow: "0 10px 30px rgba(123,47,255,0.25)",
-              transform: "translateZ(0)",
-              willChange: "transform",
-            }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLElement).style.boxShadow =
-                "0 15px 40px rgba(123,47,255,0.4)")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.boxShadow =
-                "0 10px 30px rgba(123,47,255,0.25)")
-            }
+          
+          {/* Button: CSS hover only — removed JS onMouseEnter/whileHover */}
+          <button
+            className="support-btn w-full sm:w-auto text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer"
+            style={{ background: ACCENT }}
           >
             Contact Support Team
-            <span className="text-base leading-none font-thin">→</span>
-          </motion.button>
+            <span className="btn-arrow text-base leading-none font-thin">→</span>
+          </button>
         </motion.div>
 
       </div>
+
+      {/* ── Global CSS: Zero JS Style Mutations ── */}
+      <style>{`
+        /* Support CTA Button */
+        .support-btn {
+          box-shadow: 0 10px 30px rgba(123,47,255,0.25);
+          transition: box-shadow 0.3s ease, transform 0.2s ease;
+        }
+        
+        .support-btn:hover {
+          box-shadow: 0 15px 40px rgba(123,47,255,0.4);
+          transform: scale(1.02);
+        }
+        
+        .support-btn:active {
+          transform: scale(0.98);
+        }
+
+        .btn-arrow {
+          transition: transform 0.3s ease;
+        }
+
+        .support-btn:hover .btn-arrow {
+          transform: translateX(4px);
+        }
+
+        /* Reduced Motion Fallback */
+        @media (prefers-reduced-motion: reduce) {
+          .support-btn,
+          .support-btn:hover,
+          .support-btn:active,
+          .btn-arrow {
+            transition: none !important;
+            transform: none !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
