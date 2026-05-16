@@ -1,9 +1,11 @@
 "use client";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, useReducedMotion } from "framer-motion";
 
 const ACCENT = "#7b2fff";
 
 export default function ProgrammeOverview() {
+  const prefersReducedMotion = useReducedMotion();
+
   const containerVars: Variants = {
     hidden: { opacity: 0 },
     show: {
@@ -13,7 +15,12 @@ export default function ProgrammeOverview() {
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+    // Disable the expensive blur transition on lower-end/reduced-motion devices
+    hidden: { 
+      opacity: 0, 
+      y: prefersReducedMotion ? 0 : 20, 
+      filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)" 
+    },
     show: {
       opacity: 1,
       y: 0,
@@ -42,7 +49,10 @@ export default function ProgrammeOverview() {
       {/* Localised purple glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[50vw] md:h-[50vw] pointer-events-none z-0"
-        style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
+        style={{ 
+          background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)",
+          transform: "translateZ(0)" // Force into GPU layer
+        }}
       />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6">
@@ -56,7 +66,7 @@ export default function ProgrammeOverview() {
           className="flex flex-col md:flex-row gap-12 md:gap-24 mb-20"
         >
           <div className="flex-1">
-            <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
+            <motion.div variants={itemVars} className="flex items-center gap-3 mb-6" style={{ willChange: "opacity, transform" }}>
               <div className="w-8 h-px" style={{ background: ACCENT }} />
               <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
                 Programme Overview
@@ -66,7 +76,7 @@ export default function ProgrammeOverview() {
             <motion.h2
               variants={itemVars}
               className="text-4xl md:text-5xl lg:text-6xl font-thin tracking-tight leading-[1.1]"
-              style={{ color: "#1a0050" }}
+              style={{ color: "#1a0050", willChange: "opacity, transform" }}
             >
               Shaping the{" "}
               <br className="hidden md:block" />
@@ -80,7 +90,7 @@ export default function ProgrammeOverview() {
             <motion.p
               variants={itemVars}
               className="text-base md:text-lg leading-[1.7] font-thin tracking-wide"
-              style={{ color: "rgba(30,0,80,0.55)" }}
+              style={{ color: "rgba(30,0,80,0.55)", willChange: "opacity, transform" }}
             >
               In this new era, success isn't defined by a certificate — it's defined by skills, experience, and
               confidence. At JAIN School of Future Technology, we prepare you not just for the world as it is,
@@ -102,7 +112,7 @@ export default function ProgrammeOverview() {
           <motion.div
             variants={itemVars}
             className="md:col-span-2 relative group overflow-hidden rounded-2xl p-8 md:p-10 hover:-translate-y-1 transition-all duration-500"
-            style={card}
+            style={{ ...card, willChange: "opacity, transform" }}
           >
             {/* Hover glow */}
             <div
@@ -114,20 +124,25 @@ export default function ProgrammeOverview() {
               style={{ border: "1px solid rgba(123,47,255,0.3)" }}
             />
 
-            {/* Animated blob — subtle on white */}
+            {/* Animated blob — Hardware accelerated to prevent 60px blur hanging */}
             <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none opacity-10 group-hover:opacity-20 transition-opacity duration-700"
-              style={{ filter: "blur(60px)" }}>
+              style={{ 
+                filter: "blur(60px)",
+                WebkitFilter: "blur(60px)", 
+                transform: "translateZ(0)", // Crucial for blur performance
+                willChange: "opacity"
+              }}>
               <motion.div
-                animate={{ scale: [1, 1.2, 1], x: [0, -20, 0], y: [0, 20, 0] }}
+                animate={prefersReducedMotion ? {} : { scale: [1, 1.2, 1], x: [0, -20, 0], y: [0, 20, 0] }}
                 transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute inset-0 rounded-full"
-                style={{ background: ACCENT }}
+                style={{ background: ACCENT, willChange: "transform" }}
               />
               <motion.div
-                animate={{ scale: [1, 1.5, 1], x: [0, 30, 0], y: [0, -10, 0] }}
+                animate={prefersReducedMotion ? {} : { scale: [1, 1.5, 1], x: [0, 30, 0], y: [0, -10, 0] }}
                 transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                 className="absolute top-10 right-10 w-40 h-40 rounded-full"
-                style={{ background: "#b026ff" }}
+                style={{ background: "#b026ff", willChange: "transform" }}
               />
             </div>
 
@@ -148,7 +163,7 @@ export default function ProgrammeOverview() {
           <motion.div
             variants={itemVars}
             className="relative overflow-hidden rounded-2xl p-8 md:p-10 flex flex-col justify-between group hover:-translate-y-1 transition-all duration-500"
-            style={cardAccent}
+            style={{ ...cardAccent, willChange: "opacity, transform" }}
           >
             {/* Hover border */}
             <div
@@ -156,19 +171,21 @@ export default function ProgrammeOverview() {
               style={{ border: "1px solid rgba(123,47,255,0.4)" }}
             />
 
-            {/* Scanning line */}
+            {/* Scanning line - Forced GPU layer to handle animation */}
             <motion.div
-              animate={{ top: ["-10%", "110%"] }}
+              animate={prefersReducedMotion ? {} : { top: ["-10%", "110%"] }}
               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
               className="absolute left-0 right-0 h-px pointer-events-none"
               style={{
                 background: `linear-gradient(to right, transparent, rgba(123,47,255,0.3), transparent)`,
+                transform: "translateZ(0)",
+                willChange: "top"
               }}
             />
 
             <div className="relative z-10">
               <p className="text-[11px] font-light uppercase tracking-[0.2em] mb-4 flex items-center gap-2" style={{ color: ACCENT }}>
-                <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: ACCENT }} />
+                <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: ACCENT, transform: "translateZ(0)" }} />
                 Now Open
               </p>
               <h3 className="text-2xl font-light mb-2" style={{ color: "#1a0050" }}>Applications</h3>
@@ -189,7 +206,7 @@ export default function ProgrammeOverview() {
           <motion.div
             variants={itemVars}
             className="md:col-span-2 relative overflow-hidden rounded-2xl p-8 md:p-10 group hover:-translate-y-1 transition-all duration-500"
-            style={card}
+            style={{ ...card, willChange: "opacity, transform" }}
           >
             {/* Hover glow */}
             <div
@@ -226,12 +243,14 @@ export default function ProgrammeOverview() {
 
                 {/* Traveling glowing dot */}
                 <motion.div
-                  animate={{ top: ["0%", "100%", "0%"] }}
+                  animate={prefersReducedMotion ? {} : { top: ["0%", "100%", "0%"] }}
                   transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                   className="absolute left-[3px] w-2 h-6 rounded-full z-10"
                   style={{
                     background: `linear-gradient(to bottom, transparent, ${ACCENT}, transparent)`,
                     boxShadow: "0 0 8px rgba(123,47,255,0.5)",
+                    transform: "translateZ(0)",
+                    willChange: "top"
                   }}
                 />
 
@@ -269,7 +288,7 @@ export default function ProgrammeOverview() {
           </motion.div>
 
           {/* Cards 4 & 5 — stacked right column */}
-          <motion.div variants={itemVars} className="flex flex-col gap-4 md:gap-5">
+          <motion.div variants={itemVars} className="flex flex-col gap-4 md:gap-5" style={{ willChange: "opacity, transform" }}>
 
             {/* Industry Network */}
             <div
@@ -312,8 +331,8 @@ export default function ProgrammeOverview() {
                 className="absolute bottom-8 right-8 w-3 h-3 rounded-full z-10"
                 style={{ background: ACCENT, boxShadow: "0 0 10px rgba(123,47,255,0.4)" }}
               >
-                <div className="absolute inset-0 rounded-full animate-ping" style={{ background: ACCENT, opacity: 0.3 }} />
-                <div className="absolute -inset-4 rounded-full animate-ping" style={{ border: "1px solid rgba(123,47,255,0.15)", animationDuration: "2s" }} />
+                <div className="absolute inset-0 rounded-full animate-ping" style={{ background: ACCENT, opacity: 0.3, transform: "translateZ(0)" }} />
+                <div className="absolute -inset-4 rounded-full animate-ping" style={{ border: "1px solid rgba(123,47,255,0.15)", animationDuration: "2s", transform: "translateZ(0)" }} />
               </div>
 
               <div className="relative z-10">
