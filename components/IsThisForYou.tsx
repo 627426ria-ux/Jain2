@@ -51,13 +51,15 @@ export default function IsThisForYou() {
           variants={containerVars}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+          // FIX 1: Changed to "-50px 0px" to protect mobile X-axis intersection
+          viewport={{ once: true, margin: "-50px 0px" }}
           className="flex flex-col items-center text-center mb-16 md:mb-20"
         >
           <motion.div
             variants={itemVars}
             className="flex items-center gap-3 mb-6"
-            style={{ willChange: "opacity, transform, filter" }}
+            // FIX 2: Removed filter from willChange
+            style={{ willChange: "opacity, transform" }}
           >
             <div className="w-8 h-px" style={{ background: "#7b2fff" }} />
             <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: "#7b2fff" }}>
@@ -69,7 +71,8 @@ export default function IsThisForYou() {
           <motion.h2
             variants={itemVars}
             className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
-            style={{ color: "#1a0050", willChange: "opacity, transform, filter" }}
+            // FIX 2 continued: Removed filter from willChange
+            style={{ color: "#1a0050", willChange: "opacity, transform" }}
           >
             Is This Programme{" "}
             <span className="font-light" style={{ color: "#7b2fff" }}>For You?</span>
@@ -81,7 +84,8 @@ export default function IsThisForYou() {
           variants={containerVars}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+          // FIX 1 continued: Applied margin fix here as well
+          viewport={{ once: true, margin: "-50px 0px" }}
           className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5"
         >
           {criteria.map((text, index) => (
@@ -93,7 +97,8 @@ export default function IsThisForYou() {
                 background: "#ffffff",
                 border: "1px solid rgba(123,47,255,0.15)",
                 boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
-                willChange: "opacity, transform, filter",
+                // FIX 2 continued: Removed filter from willChange
+                willChange: "opacity, transform",
                 transform: "translateZ(0)",
               }}
             >

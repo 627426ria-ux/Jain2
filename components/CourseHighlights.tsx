@@ -112,13 +112,15 @@ export default function CourseHighlights() {
           variants={containerVars}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+          // FIX 1: Applied 0px to left/right so it doesn't crush the detection area on mobile widths
+          viewport={{ once: true, margin: "-50px 0px" }}
           className="flex flex-col items-center text-center mb-16 md:mb-24"
         >
           <motion.div
             variants={itemVars}
             className="flex items-center gap-3 mb-6"
-            style={{ willChange: "opacity, transform, filter" }}
+            // FIX 2: Removed filter from willChange to prevent mobile VRAM crashes
+            style={{ willChange: "opacity, transform" }}
           >
             <div className="w-8 h-px" style={{ background: "#7b2fff" }} />
             <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: "#7b2fff" }}>
@@ -130,7 +132,7 @@ export default function CourseHighlights() {
           <motion.h2
             variants={itemVars}
             className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
-            style={{ color: "#1a0050", willChange: "opacity, transform, filter" }}
+            style={{ color: "#1a0050", willChange: "opacity, transform" }}
           >
             The Ultimate{" "}
             <span className="font-light" style={{ color: "#7b2fff" }}>Advantage</span>
@@ -142,7 +144,7 @@ export default function CourseHighlights() {
           variants={containerVars}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-50px 0px" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
         >
           {highlights.map((card, index) => (
@@ -154,8 +156,8 @@ export default function CourseHighlights() {
                 background: "#ffffff",
                 border: "1px solid rgba(123,47,255,0.15)",
                 boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.06)",
-                // Pre-promote each card: stagger entry + hover translate both need a compositor layer
-                willChange: "opacity, transform, filter",
+                // FIX 2 continued: Removed filter from willChange
+                willChange: "opacity, transform",
                 transform: "translateZ(0)",
               }}
             >

@@ -44,6 +44,7 @@ export default function ProgrammeJourney() {
   const containerRef = useRef<HTMLDivElement>(null);
   const ctaRowRef = useRef<HTMLDivElement>(null);
   const [lineCutoff, setLineCutoff] = useState(140);
+  const [isMobile, setIsMobile] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
@@ -51,11 +52,6 @@ export default function ProgrammeJourney() {
     offset: ["start center", "end center"],
   });
 
-  // scaleY is a MotionValue driven by scroll — it updates every scroll tick.
-  // The animated div MUST be on its own GPU compositor layer or this causes a
-  // main-thread style recalculation on every scroll event, exactly like an
-  // unpassivated scroll listener. will-change: transform + translateZ(0) ensures
-  // the browser applies scaleY on the compositor thread only.
   const scaleY = useTransform(
     scrollYProgress,
     [0, 1],
@@ -63,7 +59,12 @@ export default function ProgrammeJourney() {
   );
 
   useEffect(() => {
+    // Check if device is mobile to simplify animations
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile(); // Check immediately on mount
+
     const updateLayout = () => {
+      checkMobile();
       if (ctaRowRef.current) {
         setLineCutoff(ctaRowRef.current.offsetHeight - 48);
       }
@@ -84,8 +85,9 @@ export default function ProgrammeJourney() {
   const itemVars: Variants = {
     hidden: {
       opacity: 0,
-      y: prefersReducedMotion ? 0 : 20,
-      filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)",
+      // If mobile or reduced motion is preferred, strip out Y-movement and Blur completely
+      y: prefersReducedMotion || isMobile ? 0 : 20,
+      filter: prefersReducedMotion || isMobile ? "blur(0px)" : "blur(8px)",
     },
     show: {
       opacity: 1,
@@ -111,13 +113,15 @@ export default function ProgrammeJourney() {
           variants={containerVars}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+          // FIX: Protected horizontal detection area
+          viewport={{ once: true, margin: "-50px 0px" }}
           className="flex flex-col items-center text-center mb-16 md:mb-20"
         >
           <motion.div
             variants={itemVars}
             className="flex items-center gap-3 mb-6"
-            style={{ willChange: "opacity, transform, filter" }}
+            // FIX: Removed filter from willChange
+            style={{ willChange: "opacity, transform" }}
           >
             <div className="w-8 h-px" style={{ background: ACCENT }} />
             <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
@@ -129,7 +133,8 @@ export default function ProgrammeJourney() {
           <motion.h2
             variants={itemVars}
             className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
-            style={{ color: "#1a0050", willChange: "opacity, transform, filter" }}
+            // FIX: Removed filter from willChange
+            style={{ color: "#1a0050", willChange: "opacity, transform" }}
           >
             Your Path to{" "}
             <span className="font-light" style={{ color: ACCENT }}>Industry Leadership</span>
@@ -139,7 +144,7 @@ export default function ProgrammeJourney() {
         {/* Timeline */}
         <div ref={containerRef} className="relative w-full max-w-4xl mx-auto">
 
-          {/* Scroll-driven timeline line */}
+          {/* Scroll-driven timeline line (Hidden on Mobile) */}
           <div
             className="hidden md:block absolute left-[39px] top-[40px] w-px z-0"
             style={{ bottom: `${lineCutoff}px` }}
@@ -152,7 +157,6 @@ export default function ProgrammeJourney() {
                 transformOrigin: "top",
                 background: ACCENT,
                 boxShadow: `0 0 12px rgba(123,47,255,0.4), 0 0 30px rgba(123,47,255,0.2)`,
-                // scaleY is a scroll-driven MotionValue — must be compositor-only
                 willChange: "transform",
                 transform: "translateZ(0)",
               }}
@@ -167,9 +171,10 @@ export default function ProgrammeJourney() {
                 {/* Timeline node */}
                 <div className="relative flex-shrink-0 mt-0 sm:mt-2 z-10">
                   <motion.div
-                    initial={{ scale: prefersReducedMotion ? 1 : 0, opacity: 0 }}
+                    // Simplified mobile scale-in logic
+                    initial={{ scale: prefersReducedMotion || isMobile ? 1 : 0, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
-                    viewport={{ once: true, margin: "-20%" }}
+                    viewport={{ once: true, margin: "-50px 0px" }}
                     transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
                     className="w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center relative transition-all duration-500"
                     style={{
@@ -200,13 +205,14 @@ export default function ProgrammeJourney() {
                   variants={itemVars}
                   initial="hidden"
                   whileInView="show"
-                  viewport={{ once: true, margin: "-20%" }}
+                  viewport={{ once: true, margin: "-50px 0px" }}
                   className="group/card flex-1 w-full relative rounded-2xl p-6 md:p-8 transition-all duration-500 hover:-translate-y-1 overflow-hidden"
                   style={{
                     background: "#ffffff",
                     border: "1px solid rgba(123,47,255,0.15)",
                     boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
-                    willChange: "opacity, transform, filter",
+                    // FIX: Removed filter from willChange
+                    willChange: "opacity, transform",
                     transform: "translateZ(0)",
                   }}
                 >
@@ -289,16 +295,17 @@ export default function ProgrammeJourney() {
               ref={ctaRowRef}
               initial={{
                 opacity: 0,
-                y: prefersReducedMotion ? 0 : 30,
-                filter: prefersReducedMotion ? "blur(0px)" : "blur(8px)",
+                y: prefersReducedMotion || isMobile ? 0 : 30,
+                filter: prefersReducedMotion || isMobile ? "blur(0px)" : "blur(8px)",
               }}
               whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, margin: "-10%" }}
+              viewport={{ once: true, margin: "-50px 0px" }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col md:flex-row gap-6 md:gap-12 mt-6 md:mt-10 items-start"
-              style={{ willChange: "opacity, transform, filter" }}
+              // FIX: Removed filter from willChange
+              style={{ willChange: "opacity, transform" }}
             >
-              {/* Terminal node */}
+              {/* Terminal node (Hidden on mobile) */}
               <div className="relative flex-shrink-0 mt-2 z-10 hidden md:flex">
                 <div
                   className="w-20 h-20 rounded-full flex items-center justify-center"
