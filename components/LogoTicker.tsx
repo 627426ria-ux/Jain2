@@ -13,7 +13,8 @@ export default function LogoTicker() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-white/30 font-light mb-10 md:mb-14"
+          className="text-center text-[10px] md:text-[11px] uppercase tracking-[0.25em] font-light mb-10 md:mb-14"
+          style={{ color: "rgba(30,0,80,0.4)" }}
         >
           Built in collaboration with industry leaders
         </motion.p>
@@ -30,9 +31,8 @@ export default function LogoTicker() {
                 {companies.map((company, index) => (
                   <span
                     key={`logo-${set}-${index}`}
-                    className="text-xl md:text-2xl font-light tracking-tight cursor-default
-                      text-[#00e5ff]
-                      transition-colors duration-300"
+                    className="text-xl md:text-2xl font-light tracking-tight cursor-default transition-colors duration-300"
+                    style={{ color: "rgba(123,47,255,0.55)" }}
                   >
                     {company}
                   </span>

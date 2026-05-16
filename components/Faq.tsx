@@ -49,6 +49,8 @@ const faqs = [
   },
 ];
 
+const ACCENT = "#7b2fff";
+
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
@@ -71,32 +73,16 @@ export default function FAQ() {
     },
   };
 
-  const glassCard = {
-    background: "rgba(255,255,255,0.07)",
-    border: "1px solid rgba(255,255,255,0.14)",
-    backdropFilter: "blur(20px)",
-    WebkitBackdropFilter: "blur(20px)",
-    boxShadow: "0 4px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
-  };
-
-  const glassCardOpen = {
-    background: "rgba(0,229,255,0.05)",
-    border: "1px solid rgba(0,229,255,0.25)",
-    backdropFilter: "blur(20px)",
-    WebkitBackdropFilter: "blur(20px)",
-    boxShadow: "0 4px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
-  };
-
   return (
-    <section id="faq" className="relative z-20 w-full py-20 sm:py-24 md:py-32 bg-transparent overflow-hidden px-4 sm:px-6">
+    <section id="faq" className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
 
-      {/* Localised cyan glow */}
+      {/* Background glow */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] md:w-[60vw] md:h-[60vw] pointer-events-none z-0"
-        style={{ background: "radial-gradient(ellipse at center, rgba(0,229,255,0.04), transparent 60%)" }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
+        style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
       />
 
-      <div className="relative z-10 max-w-4xl mx-auto">
+      <div className="relative z-10 max-w-4xl mx-auto px-6">
 
         {/* Section Header */}
         <motion.div
@@ -106,19 +92,21 @@ export default function FAQ() {
           viewport={{ once: true, margin: "-100px" }}
           className="flex flex-col items-center text-center mb-12 sm:mb-16"
         >
-          <motion.div variants={itemVars} className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-            <div className="w-6 sm:w-8 h-px bg-[#00e5ff]" />
-            <span className="text-[10px] sm:text-[11px] text-[#00e5ff] font-light tracking-[0.2em] uppercase">
+          <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-px" style={{ background: ACCENT }} />
+            <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
               Got Questions?
             </span>
-            <div className="w-6 sm:w-8 h-px bg-[#00e5ff]" />
+            <div className="w-8 h-px" style={{ background: ACCENT }} />
           </motion.div>
+
           <motion.h2
             variants={itemVars}
-            className="text-3xl sm:text-4xl md:text-5xl font-thin tracking-tight leading-[1.1] text-white"
+            className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
+            style={{ color: "#1a0050" }}
           >
             Frequently Asked{" "}
-            <span className="text-[#00e5ff] font-light">Questions</span>
+            <span className="font-light" style={{ color: ACCENT }}>Questions</span>
           </motion.h2>
         </motion.div>
 
@@ -138,26 +126,36 @@ export default function FAQ() {
                 variants={itemVars}
                 key={index}
                 className="rounded-2xl overflow-hidden transition-all duration-300"
-                style={isOpen ? glassCardOpen : glassCard}
+                style={{
+                  background: isOpen ? "rgba(123,47,255,0.04)" : "#ffffff",
+                  border: isOpen
+                    ? "1px solid rgba(123,47,255,0.3)"
+                    : "1px solid rgba(123,47,255,0.15)",
+                  boxShadow: isOpen
+                    ? "0 4px 24px rgba(123,47,255,0.12), 0 8px 32px rgba(123,47,255,0.06)"
+                    : "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
+                }}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="w-full flex items-center justify-between p-5 sm:p-6 md:p-8 text-left focus:outline-none group"
+                  className="w-full flex items-center justify-between p-5 sm:p-6 md:p-8 text-left focus:outline-none"
                 >
                   <span
                     className="text-[15px] sm:text-[16px] md:text-[17px] font-light pr-6 sm:pr-8 transition-colors duration-300"
-                    style={{ color: isOpen ? "#00e5ff" : "rgba(255,255,255,0.85)" }}
+                    style={{ color: isOpen ? ACCENT : "#1a0050" }}
                   >
                     {faq.question}
                   </span>
 
-                  {/* Plus/Minus Icon */}
+                  {/* Plus/Minus icon */}
                   <div
                     className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-300"
                     style={{
-                      background: isOpen ? "rgba(0,229,255,0.1)" : "rgba(255,255,255,0.05)",
-                      border: isOpen ? "1px solid rgba(0,229,255,0.35)" : "1px solid rgba(255,255,255,0.15)",
-                      color: isOpen ? "#00e5ff" : "rgba(255,255,255,0.4)",
+                      background: isOpen ? "rgba(123,47,255,0.1)" : "rgba(123,47,255,0.05)",
+                      border: isOpen
+                        ? "1px solid rgba(123,47,255,0.35)"
+                        : "1px solid rgba(123,47,255,0.18)",
+                      color: isOpen ? ACCENT : "rgba(30,0,80,0.35)",
                     }}
                   >
                     <motion.svg
@@ -172,8 +170,8 @@ export default function FAQ() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     >
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
                     </motion.svg>
                   </div>
                 </button>
@@ -186,8 +184,10 @@ export default function FAQ() {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      <div className="px-5 pb-6 sm:px-6 sm:pb-8 md:px-8 text-[13px] sm:text-[14px] md:text-[15px] leading-relaxed font-thin"
-                        style={{ color: "rgba(255,255,255,0.55)" }}>
+                      <div
+                        className="px-5 pb-6 sm:px-6 sm:pb-8 md:px-8 text-[13px] sm:text-[14px] md:text-[15px] leading-relaxed font-thin"
+                        style={{ color: "rgba(30,0,80,0.55)" }}
+                      >
                         {faq.answer}
                       </div>
                     </motion.div>
@@ -205,9 +205,12 @@ export default function FAQ() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mt-12 sm:mt-16 pt-8 sm:pt-10 text-center flex flex-col items-center"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+          style={{ borderTop: "1px solid rgba(123,47,255,0.1)" }}
         >
-          <p className="text-white/40 text-[14px] sm:text-[15px] font-thin mb-5 sm:mb-6 px-4">
+          <p
+            className="text-[14px] sm:text-[15px] font-thin mb-5 sm:mb-6 px-4"
+            style={{ color: "rgba(30,0,80,0.45)" }}
+          >
             Didn't find what you're looking for?
           </p>
           <motion.button
@@ -215,14 +218,14 @@ export default function FAQ() {
             whileTap={{ scale: 0.98 }}
             className="w-full sm:w-auto text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center justify-center gap-2"
             style={{
-              background: "#b026ff",
-              boxShadow: "0 10px 30px rgba(176,38,255,0.3)",
+              background: ACCENT,
+              boxShadow: "0 10px 30px rgba(123,47,255,0.25)",
             }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(176,38,255,0.5)"}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(176,38,255,0.3)"}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(123,47,255,0.4)"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(123,47,255,0.25)"}
           >
             Contact Support Team
-            <span className="text-base leading-none font-thin">{"→"}</span>
+            <span className="text-base leading-none font-thin">→</span>
           </motion.button>
         </motion.div>
 

@@ -5,7 +5,7 @@ const highlights = [
   {
     title: "Work While You Learn",
     description: "Graduate with 2 years of professional experience alongside your degree.",
-    accent: "#00e5ff",
+    accent: "#7b2fff",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
@@ -29,7 +29,7 @@ const highlights = [
   {
     title: "Skill-First Curriculum",
     description: "Focus on AI fluency, adaptability, communication, and real-world problem-solving.",
-    accent: "#00e5ff",
+    accent: "#7b2fff",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
@@ -51,7 +51,7 @@ const highlights = [
   {
     title: "Global Industry Exposure",
     description: "International webinars, expert talks, and global collaborative projects.",
-    accent: "#00e5ff",
+    accent: "#7b2fff",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
@@ -91,12 +91,11 @@ export default function CourseHighlights() {
   };
 
   return (
-    <section className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
+    <section id = "highlights" className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
 
-      {/* Localised purple glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[60vw] md:h-[60vw] pointer-events-none z-0"
-        style={{ background: "radial-gradient(ellipse at center, rgba(176,38,255,0.05), transparent 65%)" }}
+        style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
@@ -110,19 +109,20 @@ export default function CourseHighlights() {
           className="flex flex-col items-center text-center mb-16 md:mb-24"
         >
           <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-px bg-[#00e5ff]" />
-            <span className="text-[11px] text-[#00e5ff] font-light tracking-[0.2em] uppercase">
+            <div className="w-8 h-px" style={{ background: "#7b2fff" }} />
+            <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: "#7b2fff" }}>
               Course Highlights
             </span>
-            <div className="w-8 h-px bg-[#00e5ff]" />
+            <div className="w-8 h-px" style={{ background: "#7b2fff" }} />
           </motion.div>
 
           <motion.h2
             variants={itemVars}
-            className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1] text-white"
+            className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
+            style={{ color: "#1a0050" }}
           >
             The Ultimate{" "}
-            <span className="text-[#00e5ff] font-light">Advantage</span>
+            <span className="font-light" style={{ color: "#7b2fff" }}>Advantage</span>
           </motion.h2>
         </motion.div>
 
@@ -140,63 +140,50 @@ export default function CourseHighlights() {
               variants={itemVars}
               className="group relative rounded-3xl p-8 md:p-10 overflow-hidden transition-all duration-500 hover:-translate-y-1"
               style={{
-                background: "rgba(255,255,255,0.07)",
-                border: "1px solid rgba(255,255,255,0.14)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                boxShadow: "0 4px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
+                /* Solid white card — clearly visible on white page via shadow+border */
+                background: "#ffffff",
+                border: "1px solid rgba(123,47,255,0.15)",
+                boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.06)",
               }}
             >
               {/* Per-card accent glow on hover */}
               <div
                 className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                 style={{
-                  background: `radial-gradient(ellipse at top right, ${card.accent}18, transparent 60%)`,
+                  background: `radial-gradient(ellipse at top right, ${card.accent}10, transparent 60%)`,
                 }}
               />
 
               {/* Hover border accent */}
               <div
                 className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ border: `1px solid ${card.accent}30` }}
+                style={{ border: `1px solid ${card.accent}45` }}
               />
 
               {/* Icon */}
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center mb-8 transition-all duration-500"
                 style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  color: "rgba(255,255,255,0.35)",
+                  background: `${card.accent}12`,
+                  border: `1px solid ${card.accent}25`,
+                  color: card.accent,
                 }}
-                onMouseEnter={() => {}}
               >
-                <div
-                  className="transition-all duration-500 group-hover:scale-110"
-                  style={{ color: "rgba(255,255,255,0.35)" }}
-                >
-                  {/* We set color via parent, override on group-hover via inline trick */}
-                  <span
-                    className="group-hover:text-[var(--accent)] transition-colors duration-500"
-                    style={{ "--accent": card.accent } as React.CSSProperties}
-                  >
-                    {card.icon}
-                  </span>
-                </div>
+                {card.icon}
               </div>
 
               {/* Content */}
-              <h3 className="text-xl md:text-2xl font-light text-white mb-3 tracking-tight">
+              <h3 className="text-xl md:text-2xl font-light mb-3 tracking-tight" style={{ color: "#1a0050" }}>
                 {card.title}
               </h3>
-              <p className="text-white/45 text-[14px] md:text-[15px] leading-relaxed font-thin">
+              <p className="text-[14px] md:text-[15px] leading-relaxed font-thin" style={{ color: "rgba(30,0,80,0.5)" }}>
                 {card.description}
               </p>
 
-              {/* Bottom accent line — slides in on hover */}
+              {/* Bottom accent line on hover */}
               <div
                 className="absolute bottom-0 left-8 right-8 h-px opacity-0 group-hover:opacity-100 transition-all duration-500"
-                style={{ background: `linear-gradient(to right, transparent, ${card.accent}60, transparent)` }}
+                style={{ background: `linear-gradient(to right, transparent, ${card.accent}55, transparent)` }}
               />
             </motion.div>
           ))}

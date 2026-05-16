@@ -8,7 +8,6 @@ const mentors = [
     company: "Google",
     expertise: "Generative AI & LLMs",
     imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop",
-    accent: "#00e5ff",
   },
   {
     name: "Marcus Johnson",
@@ -16,7 +15,6 @@ const mentors = [
     company: "Meta",
     expertise: "Human-Computer Interaction",
     imageUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop",
-    accent: "#00e5ff",
   },
   {
     name: "Priya Sharma",
@@ -24,7 +22,6 @@ const mentors = [
     company: "Amazon",
     expertise: "Big Data & Predictive Analytics",
     imageUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=800&auto=format&fit=crop",
-    accent: "#00e5ff",
   },
   {
     name: "David Kim",
@@ -32,9 +29,10 @@ const mentors = [
     company: "TechNova Innovate",
     expertise: "Full Stack Cloud Architecture",
     imageUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop",
-    accent: "#00e5ff",
   },
 ];
+
+const ACCENT = "#7b2fff";
 
 export default function FacultyMentors() {
   const containerVars: Variants = {
@@ -56,15 +54,15 @@ export default function FacultyMentors() {
   };
 
   return (
-    <section className="relative z-20 w-full py-20 sm:py-24 md:py-32 bg-transparent overflow-hidden px-4 sm:px-6">
+    <section className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
 
-      {/* Localised cyan glow */}
+      {/* Background glow */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] md:w-[70vw] md:h-[70vw] pointer-events-none z-0"
-        style={{ background: "radial-gradient(ellipse at center, rgba(0,229,255,0.04), transparent 60%)" }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
+        style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
       />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto">
+      <div className="relative z-10 max-w-7xl mx-auto px-6">
 
         {/* Section Header */}
         <motion.div
@@ -72,22 +70,24 @@ export default function FacultyMentors() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          className="flex flex-col items-center text-center mb-12 sm:mb-16 md:mb-20"
+          className="flex flex-col items-center text-center mb-16 md:mb-20"
         >
-          <motion.div variants={itemVars} className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-            <div className="w-6 sm:w-8 h-px bg-[#00e5ff]" />
-            <span className="text-[10px] sm:text-[11px] text-[#00e5ff] font-light tracking-[0.2em] uppercase">
+          <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-px" style={{ background: ACCENT }} />
+            <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
               Elite Mentorship
             </span>
-            <div className="w-6 sm:w-8 h-px bg-[#00e5ff]" />
+            <div className="w-8 h-px" style={{ background: ACCENT }} />
           </motion.div>
+
           <motion.h2
             variants={itemVars}
-            className="text-3xl sm:text-4xl md:text-5xl font-thin tracking-tight leading-[1.1] text-white"
+            className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
+            style={{ color: "#1a0050" }}
           >
             Learn Directly From{" "}
             <br className="hidden md:block" />
-            <span className="text-[#00e5ff] font-light">Industry Leaders</span>
+            <span className="font-light" style={{ color: ACCENT }}>Industry Leaders</span>
           </motion.h2>
         </motion.div>
 
@@ -103,19 +103,17 @@ export default function FacultyMentors() {
             <motion.div
               key={index}
               variants={itemVars}
-              className="group relative flex flex-col rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-2"
+              className="group relative flex flex-col rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-2"
               style={{
-                background: "rgba(255,255,255,0.07)",
-                border: "1px solid rgba(255,255,255,0.14)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                boxShadow: "0 4px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
+                background: "#ffffff",
+                border: "1px solid rgba(123,47,255,0.15)",
+                boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
               }}
             >
-              {/* Hover border accent */}
+              {/* Hover border */}
               <div
-                className="absolute inset-0 rounded-2xl sm:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10"
-                style={{ border: `1px solid ${mentor.accent}35` }}
+                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10"
+                style={{ border: "1px solid rgba(123,47,255,0.3)" }}
               />
 
               {/* Image */}
@@ -123,40 +121,46 @@ export default function FacultyMentors() {
                 <img
                   src={mentor.imageUrl}
                   alt={mentor.name}
-                  className="w-full h-full object-cover opacity-90 sm:grayscale sm:opacity-70 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:group-hover:grayscale-0 sm:group-hover:scale-110 sm:group-hover:opacity-90 group-hover:scale-110"
+                  className="w-full h-full object-cover opacity-90 sm:grayscale sm:opacity-80 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:group-hover:grayscale-0 sm:group-hover:scale-110 sm:group-hover:opacity-95 group-hover:scale-110"
                 />
-                {/* Dark vignette over image */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40 pointer-events-none" />
+                {/* Light vignette */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/20 pointer-events-none" />
 
-                {/* Accent glow bleeds up from bottom on hover */}
+                {/* Accent glow on hover */}
                 <div
                   className="absolute bottom-0 left-0 right-0 h-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{ background: `linear-gradient(to top, ${mentor.accent}18, transparent)` }}
+                  style={{ background: "linear-gradient(to top, rgba(123,47,255,0.12), transparent)" }}
                 />
               </div>
 
               {/* Info panel */}
-              <div className="relative z-10 flex flex-col px-3 py-3 sm:px-6 sm:py-5 flex-1">
+              <div className="relative z-10 flex flex-col px-3 py-3 sm:px-5 sm:py-4 flex-1">
 
                 {/* Company badge */}
                 <span
                   className="inline-flex items-center self-start mb-2 sm:mb-3 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[11px] font-light tracking-widest uppercase transition-all duration-300"
                   style={{
-                    background: `${mentor.accent}12`,
-                    border: `1px solid ${mentor.accent}30`,
-                    color: mentor.accent,
+                    background: "rgba(123,47,255,0.08)",
+                    border: "1px solid rgba(123,47,255,0.22)",
+                    color: ACCENT,
                   }}
                 >
                   {mentor.company}
                 </span>
 
                 {/* Name */}
-                <h3 className="text-[13px] sm:text-[17px] font-light text-white leading-snug mb-0.5 sm:mb-1">
+                <h3
+                  className="text-[13px] sm:text-[17px] font-light leading-snug mb-0.5 sm:mb-1"
+                  style={{ color: "#1a0050" }}
+                >
                   {mentor.name}
                 </h3>
 
                 {/* Role */}
-                <p className="text-white/45 text-[11px] sm:text-[13px] font-thin leading-snug">
+                <p
+                  className="text-[11px] sm:text-[13px] font-thin leading-snug"
+                  style={{ color: "rgba(30,0,80,0.45)" }}
+                >
                   {mentor.role}
                 </p>
 
@@ -171,34 +175,34 @@ export default function FacultyMentors() {
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-          className="mt-12 sm:mt-16 max-w-4xl mx-auto rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-8 text-center md:text-left overflow-hidden relative"
+          className="mt-12 sm:mt-16 max-w-4xl mx-auto rounded-2xl p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-8 text-center md:text-left overflow-hidden relative"
           style={{
-            background: "rgba(255,255,255,0.07)",
-            border: "1px solid rgba(255,255,255,0.14)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            boxShadow: "0 4px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
+            background: "#ffffff",
+            border: "1px solid rgba(123,47,255,0.15)",
+            boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
           }}
         >
           {/* Ambient glow inside banner */}
           <div
             className="absolute top-0 right-0 w-64 h-64 pointer-events-none"
-            style={{
-              background: "radial-gradient(ellipse at top right, rgba(176,38,255,0.1), transparent 65%)",
-            }}
+            style={{ background: "radial-gradient(ellipse at top right, rgba(123,47,255,0.06), transparent 65%)" }}
           />
           <div
             className="absolute bottom-0 left-0 w-48 h-48 pointer-events-none"
-            style={{
-              background: "radial-gradient(ellipse at bottom left, rgba(0,229,255,0.07), transparent 65%)",
-            }}
+            style={{ background: "radial-gradient(ellipse at bottom left, rgba(123,47,255,0.04), transparent 65%)" }}
           />
 
           <div className="relative z-10">
-            <h4 className="text-lg sm:text-2xl font-light text-white mb-2">
+            <h4
+              className="text-lg sm:text-2xl font-light mb-2"
+              style={{ color: "#1a0050" }}
+            >
               Ready to be mentored by the best?
             </h4>
-            <p className="text-white/45 text-[12px] sm:text-[14px] md:text-[15px] font-thin max-w-md">
+            <p
+              className="text-[12px] sm:text-[14px] md:text-[15px] font-thin max-w-md"
+              style={{ color: "rgba(30,0,80,0.5)" }}
+            >
               Join the waitlist for the upcoming 2026 cohort and secure your 1-on-1 industry mentorship.
             </p>
           </div>
@@ -206,10 +210,13 @@ export default function FacultyMentors() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="relative z-10 w-full md:w-auto flex-shrink-0 flex items-center justify-center gap-2.5 bg-[#b026ff] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-light text-[11px] sm:text-[13px] uppercase tracking-widest transition-all group"
-            style={{ boxShadow: "0 10px 30px rgba(176,38,255,0.3)" }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(176,38,255,0.5)"}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(176,38,255,0.3)"}
+            className="relative z-10 w-full md:w-auto flex-shrink-0 flex items-center justify-center gap-2.5 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-light text-[11px] sm:text-[13px] uppercase tracking-widest transition-all group"
+            style={{
+              background: ACCENT,
+              boxShadow: "0 10px 30px rgba(123,47,255,0.25)",
+            }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(123,47,255,0.4)"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(123,47,255,0.25)"}
           >
             Apply Now
             <span className="text-base leading-none font-thin group-hover:translate-x-1 transition-transform">→</span>

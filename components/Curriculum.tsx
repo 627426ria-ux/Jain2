@@ -177,6 +177,8 @@ const specialisations = [
   },
 ];
 
+const ACCENT = "#7b2fff";
+
 export default function Curriculum() {
   const [activeTab, setActiveTab] = useState(specialisations[0].id);
   const activeData = specialisations.find((s) => s.id === activeTab);
@@ -199,24 +201,16 @@ export default function Curriculum() {
     },
   };
 
-  const glass = {
-    background: "rgba(255,255,255,0.07)",
-    border: "1px solid rgba(255,255,255,0.14)",
-    backdropFilter: "blur(20px)",
-    WebkitBackdropFilter: "blur(20px)",
-    boxShadow: "0 4px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
-  } as const;
-
   return (
-    <section id="curriculum" className="relative z-20 w-full py-20 sm:py-24 md:py-32 bg-transparent overflow-hidden px-4 sm:px-6">
+    <section id="curriculum" className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
 
-      {/* Localised cyan glow */}
+      {/* Background glow */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] md:w-[60vw] md:h-[60vw] pointer-events-none z-0"
-        style={{ background: "radial-gradient(ellipse at center, rgba(0,229,255,0.04), transparent 60%)" }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
+        style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
       />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto">
+      <div className="relative z-10 max-w-7xl mx-auto px-6">
 
         {/* Section Header */}
         <motion.div
@@ -226,19 +220,20 @@ export default function Curriculum() {
           viewport={{ once: true, margin: "-100px" }}
           className="flex flex-col items-center text-center mb-12 sm:mb-16"
         >
-          <motion.div variants={itemVars} className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-            <div className="w-6 sm:w-8 h-px bg-[#00e5ff]" />
-            <span className="text-[10px] sm:text-[11px] text-[#00e5ff] font-light tracking-[0.2em] uppercase">
+          <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-px" style={{ background: ACCENT }} />
+            <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
               Deep Dive
             </span>
-            <div className="w-6 sm:w-8 h-px bg-[#00e5ff]" />
+            <div className="w-8 h-px" style={{ background: ACCENT }} />
           </motion.div>
+
           <motion.h2
             variants={itemVars}
-            className="text-3xl sm:text-4xl md:text-5xl font-thin tracking-tight leading-[1.1] text-white"
+            className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
+            style={{ color: "#1a0050" }}
           >
-            
-            <span className="text-[#00e5ff] font-light">Curriculum</span>
+            <span className="font-light" style={{ color: ACCENT }}>Curriculum</span>
           </motion.h2>
         </motion.div>
 
@@ -258,19 +253,16 @@ export default function Curriculum() {
               style={
                 activeTab === spec.id
                   ? {
-                      background: "rgba(0,229,255,0.15)",
-                      border: "1px solid rgba(0,229,255,0.45)",
-                      color: "#00e5ff",
-                      boxShadow: "0 0 20px rgba(0,229,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1)",
-                      backdropFilter: "blur(20px)",
-                      WebkitBackdropFilter: "blur(20px)",
+                      background: "rgba(123,47,255,0.1)",
+                      border: `1px solid rgba(123,47,255,0.45)`,
+                      color: ACCENT,
+                      boxShadow: "0 2px 16px rgba(123,47,255,0.12)",
                     }
                   : {
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.4)",
-                      backdropFilter: "blur(20px)",
-                      WebkitBackdropFilter: "blur(20px)",
+                      background: "#ffffff",
+                      border: "1px solid rgba(123,47,255,0.15)",
+                      color: "rgba(30,0,80,0.4)",
+                      boxShadow: "0 2px 8px rgba(123,47,255,0.04)",
                     }
               }
             >
@@ -293,22 +285,36 @@ export default function Curriculum() {
               {activeData?.years.map((year, index) => (
                 <div
                   key={index}
-                  className="rounded-3xl p-6 sm:p-8 group hover:-translate-y-1 transition-all duration-500"
-                  style={glass}
+                  className="group relative rounded-2xl p-6 sm:p-8 hover:-translate-y-1 transition-all duration-500 overflow-hidden"
+                  style={{
+                    background: "#ffffff",
+                    border: "1px solid rgba(123,47,255,0.15)",
+                    boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
+                  }}
                 >
+                  {/* Hover glow */}
+                  <div
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                    style={{ background: "radial-gradient(ellipse at top left, rgba(123,47,255,0.06), transparent 60%)" }}
+                  />
+                  {/* Hover border */}
+                  <div
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                    style={{ border: "1px solid rgba(123,47,255,0.3)" }}
+                  />
+
                   {/* Year title */}
                   <h3
-                    className="font-light text-lg sm:text-xl mb-5 sm:mb-6 pb-4"
+                    className="relative z-10 font-light text-lg sm:text-xl mb-5 sm:mb-6 pb-4"
                     style={{
-                      color: "#00e5ff",
-                      borderBottom: "1px solid rgba(255,255,255,0.07)",
-                      textShadow: "0 0 20px rgba(0,229,255,0.4)",
+                      color: ACCENT,
+                      borderBottom: "1px solid rgba(123,47,255,0.08)",
                     }}
                   >
                     {year.title}
                   </h3>
 
-                  <ul className="space-y-3 sm:space-y-4">
+                  <ul className="relative z-10 space-y-3 sm:space-y-4">
                     {year.subjects.map((subject, sIdx) => {
                       const parts = subject.split(" — ");
                       return (
@@ -316,13 +322,13 @@ export default function Curriculum() {
                           {/* Dot */}
                           <div
                             className="w-1.5 h-1.5 rounded-full mt-[7px] flex-shrink-0"
-                            style={{ background: "rgba(0,229,255,0.5)" }}
+                            style={{ background: "rgba(123,47,255,0.4)" }}
                           />
-                          <p className="text-[13px] sm:text-[14px] leading-relaxed font-thin text-white/50">
+                          <p className="text-[13px] sm:text-[14px] leading-relaxed font-thin" style={{ color: "rgba(30,0,80,0.5)" }}>
                             {parts.length > 1 ? (
                               <>
-                                <span className="font-light text-white/80">{parts[0]}</span>
-                                <span className="text-white/25"> — </span>
+                                <span className="font-light" style={{ color: "rgba(30,0,80,0.8)" }}>{parts[0]}</span>
+                                <span style={{ color: "rgba(30,0,80,0.2)" }}> — </span>
                                 {parts[1]}
                               </>
                             ) : (

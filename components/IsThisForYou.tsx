@@ -32,10 +32,9 @@ export default function IsThisForYou() {
   return (
     <section className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
 
-      {/* Localised cyan glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
-        style={{ background: "radial-gradient(ellipse at center, rgba(0,229,255,0.04), transparent 65%)" }}
+        style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.06), transparent 65%)" }}
       />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6">
@@ -49,19 +48,20 @@ export default function IsThisForYou() {
           className="flex flex-col items-center text-center mb-16 md:mb-20"
         >
           <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-px bg-[#00e5ff]" />
-            <span className="text-[11px] text-[#00e5ff] font-light tracking-[0.2em] uppercase">
+            <div className="w-8 h-px" style={{ background: "#7b2fff" }} />
+            <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: "#7b2fff" }}>
               Candidate Profile
             </span>
-            <div className="w-8 h-px bg-[#00e5ff]" />
+            <div className="w-8 h-px" style={{ background: "#7b2fff" }} />
           </motion.div>
 
           <motion.h2
             variants={itemVars}
-            className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1] text-white"
+            className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1]"
+            style={{ color: "#1a0050" }}
           >
             Is This Programme{" "}
-            <span className="text-[#00e5ff] font-light">For You?</span>
+            <span className="font-light" style={{ color: "#7b2fff" }}>For You?</span>
           </motion.h2>
         </motion.div>
 
@@ -79,31 +79,29 @@ export default function IsThisForYou() {
               variants={itemVars}
               className="group relative rounded-2xl p-6 md:p-8 flex items-start gap-5 transition-all duration-500 hover:-translate-y-1 overflow-hidden"
               style={{
-                background: "rgba(255,255,255,0.07)",
-                border: "1px solid rgba(255,255,255,0.14)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                boxShadow: "0 4px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
+                background: "#ffffff",
+                border: "1px solid rgba(123,47,255,0.15)",
+                boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
               }}
             >
               {/* Hover glow */}
               <div
                 className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ background: "radial-gradient(ellipse at top left, rgba(0,229,255,0.07), transparent 60%)" }}
+                style={{ background: "radial-gradient(ellipse at top left, rgba(123,47,255,0.06), transparent 60%)" }}
               />
 
               {/* Hover border */}
               <div
                 className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ border: "1px solid rgba(0,229,255,0.22)" }}
+                style={{ border: "1px solid rgba(123,47,255,0.3)" }}
               />
 
               {/* Checkmark */}
               <div
                 className="relative z-10 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-0.5 transition-all duration-500"
                 style={{
-                  background: "rgba(0,229,255,0.08)",
-                  border: "1px solid rgba(0,229,255,0.2)",
+                  background: "rgba(123,47,255,0.08)",
+                  border: "1px solid rgba(123,47,255,0.22)",
                 }}
               >
                 <svg
@@ -111,7 +109,7 @@ export default function IsThisForYou() {
                   height="13"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#00e5ff"
+                  stroke="#7b2fff"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -122,7 +120,12 @@ export default function IsThisForYou() {
               </div>
 
               {/* Text */}
-              <p className="relative z-10 text-white/50 text-[15px] md:text-[16px] leading-relaxed font-thin group-hover:text-white/80 transition-colors duration-500">
+              <p
+                className="relative z-10 text-[15px] md:text-[16px] leading-relaxed font-thin transition-colors duration-500"
+                style={{ color: "rgba(30,0,80,0.5)" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "rgba(30,0,80,0.85)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "rgba(30,0,80,0.5)")}
+              >
                 {text}
               </p>
             </motion.div>
