@@ -46,11 +46,11 @@ const faqs = [
   {
     question: "Do students earn a stipend during their work placement?",
     answer: "Yes, depending on the partner company and the student's performance, candidates can earn a performance-based stipend during their work-integrated learning period in Year 2 and Year 3.",
-  }
+  },
 ];
 
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0); // First FAQ open by default
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const containerVars: Variants = {
     hidden: { opacity: 0 },
@@ -61,7 +61,6 @@ export default function FAQ() {
   };
 
   const itemVars: Variants = {
-    // Subtle scale reveal for premium feel
     hidden: { opacity: 0, y: 20, scale: 0.98, filter: "blur(5px)" },
     show: {
       opacity: 1,
@@ -72,16 +71,35 @@ export default function FAQ() {
     },
   };
 
+  const glassCard = {
+    background: "rgba(255,255,255,0.07)",
+    border: "1px solid rgba(255,255,255,0.14)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    boxShadow: "0 4px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
+  };
+
+  const glassCardOpen = {
+    background: "rgba(0,229,255,0.05)",
+    border: "1px solid rgba(0,229,255,0.25)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    boxShadow: "0 4px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
+  };
+
   return (
-    <section id = 'faq' className="relative z-20 w-full py-20 sm:py-24 md:py-32 bg-transparent overflow-hidden px-4 sm:px-6">
-      
-      {/* --- LOCALIZED SECTION GLOW (Light Mode) --- */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] md:w-[60vw] md:h-[60vw] bg-[radial-gradient(ellipse_at_center,rgba(0,102,255,0.04),transparent_60%)] pointer-events-none z-0" />
+    <section id="faq" className="relative z-20 w-full py-20 sm:py-24 md:py-32 bg-transparent overflow-hidden px-4 sm:px-6">
+
+      {/* Localised cyan glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] md:w-[60vw] md:h-[60vw] pointer-events-none z-0"
+        style={{ background: "radial-gradient(ellipse at center, rgba(0,229,255,0.04), transparent 60%)" }}
+      />
 
       <div className="relative z-10 max-w-4xl mx-auto">
-        
+
         {/* Section Header */}
-        <motion.div 
+        <motion.div
           variants={containerVars}
           initial="hidden"
           whileInView="show"
@@ -89,22 +107,23 @@ export default function FAQ() {
           className="flex flex-col items-center text-center mb-12 sm:mb-16"
         >
           <motion.div variants={itemVars} className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-            <div className="w-6 sm:w-8 h-[1px] bg-[#0066ff]" />
-            <span className="text-[10px] sm:text-[11px] text-[#0066ff] font-bold tracking-[0.2em] uppercase">
+            <div className="w-6 sm:w-8 h-px bg-[#00e5ff]" />
+            <span className="text-[10px] sm:text-[11px] text-[#00e5ff] font-light tracking-[0.2em] uppercase">
               Got Questions?
             </span>
-            <div className="w-6 sm:w-8 h-[1px] bg-[#0066ff]" />
+            <div className="w-6 sm:w-8 h-px bg-[#00e5ff]" />
           </motion.div>
-          <motion.h2 
+          <motion.h2
             variants={itemVars}
-            className="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight leading-[1.1] text-[#02040a]"
+            className="text-3xl sm:text-4xl md:text-5xl font-thin tracking-tight leading-[1.1] text-white"
           >
-            Frequently Asked <span className="text-[#0066ff] font-medium">Questions</span>
+            Frequently Asked{" "}
+            <span className="text-[#00e5ff] font-light">Questions</span>
           </motion.h2>
         </motion.div>
 
         {/* FAQ Accordion List */}
-        <motion.div 
+        <motion.div
           variants={containerVars}
           initial="hidden"
           whileInView="show"
@@ -113,32 +132,45 @@ export default function FAQ() {
         >
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
-            
+
             return (
-              <motion.div 
+              <motion.div
                 variants={itemVars}
                 key={index}
-                // Updated to clean white cards with soft borders and shadows
-                className={`rounded-[20px] bg-white border transition-all duration-300 overflow-hidden ${
-                  isOpen 
-                    ? "border-[#0066ff]/30 shadow-[0_15px_40px_-10px_rgba(0,102,255,0.12)]" 
-                    : "border-gray-200 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:border-[#0066ff]/20 hover:shadow-[0_8px_25px_rgba(0,0,0,0.04)]"
-                }`}
+                className="rounded-2xl overflow-hidden transition-all duration-300"
+                style={isOpen ? glassCardOpen : glassCard}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                   className="w-full flex items-center justify-between p-5 sm:p-6 md:p-8 text-left focus:outline-none group"
                 >
-                  <span className={`text-[15px] sm:text-[16px] md:text-[18px] font-medium pr-6 sm:pr-8 transition-colors duration-300 ${isOpen ? "text-[#0066ff]" : "text-[#02040a] group-hover:text-[#0066ff]"}`}>
+                  <span
+                    className="text-[15px] sm:text-[16px] md:text-[17px] font-light pr-6 sm:pr-8 transition-colors duration-300"
+                    style={{ color: isOpen ? "#00e5ff" : "rgba(255,255,255,0.85)" }}
+                  >
                     {faq.question}
                   </span>
-                  
+
                   {/* Plus/Minus Icon */}
-                  <div className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full border flex items-center justify-center transition-all duration-300 ${isOpen ? "border-[#0066ff]/30 bg-[#0066ff]/5 text-[#0066ff]" : "border-gray-200 text-gray-400 group-hover:border-[#0066ff]/30 group-hover:text-[#0066ff]"}`}>
-                    <motion.svg 
+                  <div
+                    className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-300"
+                    style={{
+                      background: isOpen ? "rgba(0,229,255,0.1)" : "rgba(255,255,255,0.05)",
+                      border: isOpen ? "1px solid rgba(0,229,255,0.35)" : "1px solid rgba(255,255,255,0.15)",
+                      color: isOpen ? "#00e5ff" : "rgba(255,255,255,0.4)",
+                    }}
+                  >
+                    <motion.svg
                       animate={{ rotate: isOpen ? 45 : 0 }}
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                      width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
                       <line x1="12" y1="5" x2="12" y2="19"></line>
                       <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -154,7 +186,8 @@ export default function FAQ() {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      <div className="px-5 pb-6 sm:px-6 sm:pb-8 md:px-8 text-[#02040a]/70 text-[13px] sm:text-[14px] md:text-[15px] leading-relaxed font-light">
+                      <div className="px-5 pb-6 sm:px-6 sm:pb-8 md:px-8 text-[13px] sm:text-[14px] md:text-[15px] leading-relaxed font-thin"
+                        style={{ color: "rgba(255,255,255,0.55)" }}>
                         {faq.answer}
                       </div>
                     </motion.div>
@@ -165,20 +198,32 @@ export default function FAQ() {
           })}
         </motion.div>
 
-        {/* Secondary Conversion CTA (Fluid Stack on Mobile) */}
-        <motion.div 
+        {/* Bottom CTA */}
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-gray-200 text-center flex flex-col items-center"
+          className="mt-12 sm:mt-16 pt-8 sm:pt-10 text-center flex flex-col items-center"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
         >
-          <p className="text-[#02040a]/60 text-[14px] sm:text-[15px] font-light mb-5 sm:mb-6 px-4">
+          <p className="text-white/40 text-[14px] sm:text-[15px] font-thin mb-5 sm:mb-6 px-4">
             Didn't find what you're looking for?
           </p>
-          <button className="w-full sm:w-auto bg-white hover:bg-gray-50 text-[#02040a] border border-gray-200 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold text-[12px] sm:text-[13px] uppercase tracking-widest shadow-[0_4px_15px_rgba(0,0,0,0.02)] transition-all hover:border-[#0066ff]/30 hover:text-[#0066ff] hover:-translate-y-0.5">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full sm:w-auto text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+            style={{
+              background: "#b026ff",
+              boxShadow: "0 10px 30px rgba(176,38,255,0.3)",
+            }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(176,38,255,0.5)"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(176,38,255,0.3)"}
+          >
             Contact Support Team
-          </button>
+            <span className="text-base leading-none font-thin">{"→"}</span>
+          </motion.button>
         </motion.div>
 
       </div>

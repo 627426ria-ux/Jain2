@@ -1,27 +1,25 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowRight } from "lucide-react"; // Make sure to add 'X' to your imports
+import { Menu, X, ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Handle scroll detection for background blur
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Prevent background scrolling when mobile menu is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-    // Cleanup on unmount
     return () => { document.body.style.overflow = "unset"; };
   }, [isOpen]);
 
@@ -29,7 +27,7 @@ export default function Navbar() {
     { name: "About the Programme", href: "#about" },
     { name: "Highlights", href: "#highlights" },
     { name: "Curriculum", href: "#curriculum" },
-    { name: "FAQ", href: "#faq" }
+    { name: "FAQ", href: "#faq" },
   ];
 
   return (
@@ -38,24 +36,40 @@ export default function Navbar() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-          scrolled ? "bg-white/90 backdrop-blur-md py-4 shadow-sm" : "bg-transparent py-6"
-        }`}
+        className="fixed top-0 w-full z-50 transition-all duration-500 py-4"
+        style={
+          scrolled
+            ? {
+                background: "rgba(255,255,255,0.05)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                borderBottom: "1px solid rgba(255,255,255,0.1)",
+                boxShadow: "0 4px 32px rgba(0,0,0,0.25)",
+              }
+            : { background: "transparent" }
+        }
       >
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          
-          {/* Logo (Responsive text hiding for small screens) */}
-          <div className="text-[#02040a] font-bold text-[16px] md:text-[18px] tracking-tight whitespace-nowrap relative z-50">
-            JAIN 
+
+          {/* Logo */}
+          <div className="relative z-50">
+            <Image
+              src="/Screenshot 2026-05-16 at 3.53.08 PM.png"
+              alt="Logo"
+              width={80}
+              height={32}
+              className="h-8 w-auto object-contain"
+              priority
+            />
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8 xl:gap-10 text-[12px] uppercase tracking-widest font-bold text-[#02040a]/60">
+          <div className="hidden lg:flex items-center gap-8 xl:gap-10 text-[11px] uppercase tracking-widest font-light text-white/50">
             {navLinks.map((link) => (
-              <a 
-                key={link.name} 
-                href={link.href} 
-                className="hover:text-[#0066ff] transition-colors duration-300"
+              <a
+                key={link.name}
+                href={link.href}
+                className="hover:text-[#00e5ff] transition-colors duration-300"
               >
                 {link.name}
               </a>
@@ -64,19 +78,27 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center">
-            <a 
-              href="/application" 
-              className="bg-[#0066ff] text-white text-[12px] font-bold uppercase tracking-widest px-6 py-3 rounded-full flex items-center gap-2 hover:bg-[#0052cc] shadow-[0_4px_15px_rgba(0,102,255,0.2)] hover:shadow-[0_8px_25px_rgba(0,102,255,0.4)] transition-all duration-300 hover:-translate-y-0.5 group"
+            <motion.a
+              href="/application"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="text-white text-[11px] font-light uppercase tracking-widest px-6 py-3 rounded-full flex items-center gap-2 transition-all duration-300 group"
+              style={{
+                background: "#b026ff",
+                boxShadow: "0 10px 30px rgba(176,38,255,0.3)",
+              }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 15px 40px rgba(176,38,255,0.5)"}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(176,38,255,0.3)"}
             >
               Apply Now
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-300" />
-            </a>
+            </motion.a>
           </div>
 
-          {/* Mobile Hamburger Toggle */}
-          <button 
-            onClick={() => setIsOpen(!isOpen)} 
-            className="lg:hidden relative z-50 p-2 -mr-2 text-[#02040a] hover:text-[#0066ff] transition-colors focus:outline-none"
+          {/* Mobile Hamburger */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="lg:hidden relative z-50 p-2 -mr-2 text-white/60 hover:text-[#00e5ff] transition-colors focus:outline-none"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -92,7 +114,12 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed inset-0 z-40 bg-white/95 backdrop-blur-xl flex flex-col pt-28 px-6 pb-10 overflow-y-auto lg:hidden"
+            className="fixed inset-0 z-40 flex flex-col pt-28 px-6 pb-10 overflow-y-auto lg:hidden"
+            style={{
+              background: "rgba(10,5,25,0.97)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+            }}
           >
             {/* Mobile Links */}
             <div className="flex flex-col gap-6 mt-10">
@@ -104,7 +131,8 @@ export default function Navbar() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 + i * 0.1 }}
-                  className="text-[#02040a] text-3xl sm:text-4xl font-light tracking-tight border-b border-gray-100 pb-4 hover:text-[#0066ff] transition-colors"
+                  className="text-white/70 text-3xl sm:text-4xl font-thin tracking-tight pb-4 hover:text-[#00e5ff] transition-colors"
+                  style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
                 >
                   {link.name}
                 </motion.a>
@@ -112,20 +140,25 @@ export default function Navbar() {
             </div>
 
             {/* Mobile CTA */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
               className="mt-auto pt-10"
             >
-              <a 
-                href="/application" 
+              <motion.a
+                href="/application"
                 onClick={() => setIsOpen(false)}
-                className="w-full bg-[#0066ff] text-white text-[13px] font-bold uppercase tracking-widest px-6 py-4.5 rounded-full flex justify-center items-center gap-3 shadow-[0_10px_30px_rgba(0,102,255,0.3)] transition-all"
+                whileTap={{ scale: 0.98 }}
+                className="w-full text-white text-[12px] font-light uppercase tracking-widest px-6 py-4 rounded-full flex justify-center items-center gap-3 transition-all"
+                style={{
+                  background: "#b026ff",
+                  boxShadow: "0 10px 30px rgba(176,38,255,0.3)",
+                }}
               >
                 Start Application
                 <ArrowRight className="w-4 h-4" />
-              </a>
+              </motion.a>
             </motion.div>
           </motion.div>
         )}

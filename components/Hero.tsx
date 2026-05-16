@@ -20,6 +20,9 @@ export default function Hero() {
     },
   };
 
+  const driveFileId = "194XCFquD6K4srk_lmdhqwqUxlCZ2Ngoq";
+  const brochureDownloadUrl = `https://drive.google.com/uc?export=download&id=${driveFileId}`;
+
   return (
     <section className="relative z-30 w-full flex flex-col items-center justify-center px-4 sm:px-6 text-center pt-32 pb-6 sm:pt-[15vh] md:pt-[18vh] sm:pb-[8vh] md:pb-[12vh]">
       <motion.div
@@ -29,26 +32,26 @@ export default function Hero() {
         className="max-w-5xl flex flex-col items-center w-full"
       >
         {/* Urgency Badge */}
-        <motion.div variants={itemVars} className="flex items-center gap-2 sm:gap-2.5 mb-6 sm:mb-8 bg-[#0066ff]/5 border border-[#0066ff]/10 rounded-full px-4 sm:px-5 py-1.5 sm:py-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shrink-0" />
-          <span className="text-[9px] sm:text-[12px] text-[#02040a]/70 font-bold tracking-widest uppercase">
-            Only 23 seats remaining — Closes June 15
+        <motion.div variants={itemVars} className="flex items-center gap-2 sm:gap-2.5 mb-6 sm:mb-8 bg-white/10 border border-white/20 rounded-full px-4 sm:px-5 py-1.5 sm:py-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse shrink-0" />
+          <span className="text-[9px] sm:text-[12px] text-white/60 font-light tracking-widest uppercase">
+            Only 23 seats remaining — Closes June 20
           </span>
         </motion.div>
 
         {/* Headline */}
         <motion.h1
           variants={itemVars}
-          className="text-4xl sm:text-[3.2rem] md:text-[4.8rem] lg:text-[6rem] font-light tracking-tight sm:tracking-[-0.03em] leading-[1.15] sm:leading-[1.05] mb-6 sm:mb-8 text-[#02040a]"
+          className="text-4xl sm:text-[3.2rem] md:text-[4.8rem] lg:text-[6rem] font-thin tracking-tight sm:tracking-[-0.03em] leading-[1.15] sm:leading-[1.05] mb-6 sm:mb-8 text-white"
         >
-          <span className="text-[#0066ff] font-medium">India's First</span> Work <br className="hidden sm:block" />
-          Integrated UG Program
+          <span className="text-[#00e5ff] font-light">India's First</span> Work <br className="hidden sm:block" />
+          Integrated BCA Program
         </motion.h1>
 
         {/* Subheadline */}
         <motion.p
           variants={itemVars}
-          className="max-w-2xl text-[#02040a]/60 text-[14px] sm:text-[16px] md:text-[18px] leading-relaxed sm:leading-[1.7] mb-8 sm:mb-10 font-light tracking-wide px-2 sm:px-0"
+          className="max-w-2xl text-white/50 text-[14px] sm:text-[16px] md:text-[18px] leading-relaxed sm:leading-[1.7] font-thin tracking-wide mb-8 sm:mb-10 px-2 sm:px-0"
         >
           Earn a UGC-recognised BCA degree + 2 years of real industry experience
           while you study — not after.
@@ -60,20 +63,24 @@ export default function Hero() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full sm:w-auto justify-center bg-[#0066ff] text-white px-8 py-4 rounded-full font-semibold text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center gap-2.5 shadow-[0_10px_30px_rgba(0,102,255,0.2)] hover:shadow-[0_15px_40px_rgba(0,102,255,0.35)] group"
+            className="w-full sm:w-auto justify-center bg-[#b026ff] text-white px-8 py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center gap-2.5 shadow-[0_10px_30px_rgba(176,38,255,0.3)] hover:shadow-[0_15px_40px_rgba(176,38,255,0.5)] group"
           >
             Apply now
-            <span className="text-base leading-none pb-[1px] font-light group-hover:translate-x-1 transition-transform">{'→'}</span>
+            <span className="text-base leading-none pb-[1px] font-thin group-hover:translate-x-1 transition-transform">{'→'}</span>
           </motion.button>
 
-          {/* Secondary Button */}
-          <motion.button
+          {/* Secondary Button — Download Brochure */}
+          <motion.a
+            href={brochureDownloadUrl}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
             whileHover={{ opacity: 1, x: 4 }}
-            className="w-full sm:w-auto justify-center text-[#02040a]/50 hover:text-[#02040a] px-6 py-4 font-bold text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center gap-2.5 group"
+            className="w-full sm:w-auto justify-center text-white/40 hover:text-white/80 px-6 py-4 font-light text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center gap-2.5 group cursor-pointer"
           >
             Download brochure
-            <span className="text-base leading-none pb-[1px] font-light group-hover:translate-x-1 transition-transform">{'→'}</span>
-          </motion.button>
+            <span className="text-base leading-none pb-[1px] font-thin group-hover:translate-x-1 transition-transform">{'→'}</span>
+          </motion.a>
         </motion.div>
       </motion.div>
     </section>

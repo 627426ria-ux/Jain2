@@ -7,7 +7,7 @@ const criteria = [
   "You aspire to master Artificial Intelligence — from Full Stack AI Dev to Generative AI, Data Analytics, and AI-driven Design.",
   "You value mentorship and networking with industry experts.",
   "You believe in learning through real-world projects, internships, and industry collaborations.",
-  "You see yourself as a changemaker, ready to lead the AI revolution."
+  "You see yourself as a changemaker, ready to lead the AI revolution.",
 ];
 
 export default function IsThisForYou() {
@@ -15,32 +15,33 @@ export default function IsThisForYou() {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
     },
   };
 
   const itemVars: Variants = {
-    // Added a subtle scale effect for a smoother, premium reveal
-    hidden: { opacity: 0, y: 20, scale: 0.95, filter: "blur(5px)" },
+    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
     show: {
       opacity: 1,
       y: 0,
-      scale: 1,
       filter: "blur(0px)",
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] as const },
     },
   };
 
   return (
     <section className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
-      
-      {/* --- LOCALIZED SECTION GLOW --- */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw] md:w-[60vw] md:h-[60vw] bg-[radial-gradient(ellipse_at_center,rgba(0,102,255,0.04),transparent_60%)] pointer-events-none z-0" />
+
+      {/* Localised cyan glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
+        style={{ background: "radial-gradient(ellipse at center, rgba(0,229,255,0.04), transparent 65%)" }}
+      />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6">
-        
+
         {/* Section Header */}
-        <motion.div 
+        <motion.div
           variants={containerVars}
           initial="hidden"
           whileInView="show"
@@ -48,44 +49,80 @@ export default function IsThisForYou() {
           className="flex flex-col items-center text-center mb-16 md:mb-20"
         >
           <motion.div variants={itemVars} className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-[1px] bg-[#0066ff]" />
-            <span className="text-[11px] text-[#0066ff] font-bold tracking-[0.2em] uppercase">
+            <div className="w-8 h-px bg-[#00e5ff]" />
+            <span className="text-[11px] text-[#00e5ff] font-light tracking-[0.2em] uppercase">
               Candidate Profile
             </span>
-            <div className="w-8 h-[1px] bg-[#0066ff]" />
+            <div className="w-8 h-px bg-[#00e5ff]" />
           </motion.div>
-          <motion.h2 
+
+          <motion.h2
             variants={itemVars}
-            className="text-3xl md:text-5xl font-light tracking-tight leading-[1.1] text-[#02040a]"
+            className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1] text-white"
           >
-            Is This Programme <span className="text-[#0066ff] font-medium">For You?</span>
+            Is This Programme{" "}
+            <span className="text-[#00e5ff] font-light">For You?</span>
           </motion.h2>
         </motion.div>
 
         {/* Checklist Grid */}
-        <motion.div 
+        <motion.div
           variants={containerVars}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5"
         >
           {criteria.map((text, index) => (
-            <motion.div 
+            <motion.div
               key={index}
-              variants={itemVars} 
-              // Updated to white backgrounds, subtle borders, and soft hover shadows
-              className="group relative rounded-2xl bg-white border border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-6 md:p-8 flex items-start gap-5 transition-all duration-300 hover:shadow-[0_15px_40px_rgba(0,102,255,0.08)] hover:border-[#0066ff]/30 hover:-translate-y-1"
+              variants={itemVars}
+              className="group relative rounded-2xl p-6 md:p-8 flex items-start gap-5 transition-all duration-500 hover:-translate-y-1 overflow-hidden"
+              style={{
+                background: "rgba(255,255,255,0.07)",
+                border: "1px solid rgba(255,255,255,0.14)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                boxShadow: "0 4px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
+              }}
             >
-              {/* Premium Checkmark Icon (Kept blue to pop against white) */}
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#0066ff]/5 border border-[#0066ff]/20 flex items-center justify-center mt-0.5 group-hover:bg-[#0066ff]/10 group-hover:border-[#0066ff]/40 transition-colors duration-300">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0066ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
+              {/* Hover glow */}
+              <div
+                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{ background: "radial-gradient(ellipse at top left, rgba(0,229,255,0.07), transparent 60%)" }}
+              />
+
+              {/* Hover border */}
+              <div
+                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{ border: "1px solid rgba(0,229,255,0.22)" }}
+              />
+
+              {/* Checkmark */}
+              <div
+                className="relative z-10 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-0.5 transition-all duration-500"
+                style={{
+                  background: "rgba(0,229,255,0.08)",
+                  border: "1px solid rgba(0,229,255,0.2)",
+                }}
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#00e5ff"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+                >
+                  <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
 
-              {/* Text Content (Darkened for Light Mode) */}
-              <p className="text-[#02040a]/70 text-[15px] md:text-[16px] leading-relaxed font-light group-hover:text-[#02040a] transition-colors duration-300">
+              {/* Text */}
+              <p className="relative z-10 text-white/50 text-[15px] md:text-[16px] leading-relaxed font-thin group-hover:text-white/80 transition-colors duration-500">
                 {text}
               </p>
             </motion.div>

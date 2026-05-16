@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 
-// Curriculum Data extracted and normalized
 const specialisations = [
   {
     id: "applied-ai",
@@ -49,35 +48,35 @@ const specialisations = [
       {
         title: "Year 1 Core",
         subjects: [
-          "DSA — Data Structures and Algorithms",
-          "DECS — Digital Electronics and Computer Organisation",
-          "MAS — Maths and Statistics Foundation",
-          "DBD — Database Design",
-          "JNCP — Object Oriented & Concurrent Programming using Java",
-          "DT — Design Thinking",
+          "Data Structures and Algorithms",
+          "Digital Electronics and Computer Organisation",
+          "Maths and Statistics Foundation",
+          "Database Design",
+          "Object Oriented & Concurrent Programming using Java",
+          "Design Thinking",
         ],
       },
       {
         title: "Year 2",
         subjects: [
-          "DL — Deep Learning",
-          "FSAP — Full Stack Application Development",
-          "DS — Data Science",
-          "AMC — Advanced Mathematics for Computing",
-          "SC — Soft Computing",
-          "AML — Advanced Machine Learning",
+          "Deep Learning",
+          "Full Stack Application Development",
+          "Data Science",
+          "Advanced Mathematics for Computing",
+          "Soft Computing",
+          "Advanced Machine Learning",
         ],
       },
       {
         title: "Year 3",
         subjects: [
-          "BDA — Big Data Analytics",
-          "RL — Reinforcement Learning",
-          "XAI — Explainable AI",
-          "AISE — AI System Engineering",
-          "SMMI — Speech & Multimodal AI",
-          "DAA — Algorithm Design and Analysis",
-          "AGI & ASI — Artificial General Intelligence and Superintelligence",
+          "Big Data Analytics",
+          "Reinforcement Learning",
+          "Explainable AI",
+          "AI System Engineering",
+          "Speech & Multimodal AI",
+          "Algorithm Design and Analysis",
+          "Artificial General Intelligence and Superintelligence",
         ],
       },
     ],
@@ -120,16 +119,6 @@ const specialisations = [
           "Public Speaking, Elective 2, Universal Human Values",
         ],
       },
-      {
-        title: "Year 4 (Sem 7 & 8)",
-        subjects: [
-          "Responsible AI, Agile Project Management",
-          "Elective 3, MOOC",
-          "Project Design and Seminar",
-          "MOOC",
-          "Project or Research",
-        ],
-      },
     ],
   },
   {
@@ -139,44 +128,49 @@ const specialisations = [
       {
         title: "Year 1 (Sem 1 & 2)",
         subjects: [
-          "Computational Thinking with Python, Economics",
-          "DECS, MAS, English, Hindi",
-          "DSA, Artificial Intelligence & Machine Learning",
+          "Computational Thinking with Python",
+          "Economics",
+          "Digital Electronics and Computer Organisation",
+          "Maths and Statistics Foundation",
+          "English & Hindi",
+          "Data Structures and Algorithms",
+          "Artificial Intelligence & Machine Learning",
           "Business Finance",
-          "Design Thinking, Organisational Behaviour",
+          "Design Thinking",
+          "Organisational Behaviour",
           "Foreign Language",
         ],
       },
       {
         title: "Year 2 (Sem 3 & 4)",
         subjects: [
-          "DBD, Full Stack Application Development",
-          "Operational Management, Computer Networks",
-          "Data Analytics, Constitution of India",
-          "Operations Research, Intro to Deep Learning",
-          "BIS & Data Technology, Marketing",
-          "Creative Writing, Indian Knowledge Systems",
+          "Database Design",
+          "Full Stack Application Development",
+          "Operational Management",
+          "Computer Networks",
+          "Data Analytics",
+          "Constitution of India",
+          "Operations Research",
+          "Introduction to Deep Learning",
+          "Business Information Systems & Data Technology",
+          "Marketing",
+          "Creative Writing",
+          "Indian Knowledge Systems",
         ],
       },
       {
         title: "Year 3 (Sem 5 & 6)",
         subjects: [
-          "Business Intelligence, Data Mining & Warehousing",
-          "GenAI: Foundations and Tools, Management Science",
-          "Business Communication, Elective 1",
-          "Intro to Supply Chain Management",
-          "Gen AI: LLMs to Agents, Advanced Corporate Finance",
-          "DevOps, Elective 2, Universal Human Values",
-        ],
-      },
-      {
-        title: "Year 4 (Sem 7 & 8)",
-        subjects: [
-          "Management Strategy in Tech Sector",
-          "Agile Project Management, Elective 3",
-          "MOOC, Project Design and Seminar",
-          "MOOC",
-          "Project or Research",
+          "Business Intelligence",
+          "Data Mining & Warehousing",
+          "Generative AI: Foundations and Tools",
+          "Management Science",
+          "Business Communication",
+          "Introduction to Supply Chain Management",
+          "Generative AI: Large Language Models to Agents",
+          "Advanced Corporate Finance",
+          "DevOps",
+          "Universal Human Values",
         ],
       },
     ],
@@ -191,31 +185,41 @@ export default function Curriculum() {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
     },
   };
 
   const itemVars: Variants = {
-    hidden: { opacity: 0, y: 20, scale: 0.98, filter: "blur(5px)" },
+    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
     show: {
       opacity: 1,
       y: 0,
-      scale: 1,
       filter: "blur(0px)",
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
+      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] as const },
     },
   };
 
+  const glass = {
+    background: "rgba(255,255,255,0.07)",
+    border: "1px solid rgba(255,255,255,0.14)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    boxShadow: "0 4px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
+  } as const;
+
   return (
-    <section id = 'curriculum' className="relative z-20 w-full py-20 sm:py-24 md:py-32 bg-transparent overflow-hidden px-4 sm:px-6">
-      
-      {/* Localized Glow (Light Mode adjusted) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] md:w-[60vw] md:h-[60vw] bg-[radial-gradient(ellipse_at_center,rgba(0,102,255,0.04),transparent_60%)] pointer-events-none z-0" />
+    <section id="curriculum" className="relative z-20 w-full py-20 sm:py-24 md:py-32 bg-transparent overflow-hidden px-4 sm:px-6">
+
+      {/* Localised cyan glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] md:w-[60vw] md:h-[60vw] pointer-events-none z-0"
+        style={{ background: "radial-gradient(ellipse at center, rgba(0,229,255,0.04), transparent 60%)" }}
+      />
 
       <div className="relative z-10 w-full max-w-7xl mx-auto">
-        
+
         {/* Section Header */}
-        <motion.div 
+        <motion.div
           variants={containerVars}
           initial="hidden"
           whileInView="show"
@@ -223,43 +227,59 @@ export default function Curriculum() {
           className="flex flex-col items-center text-center mb-12 sm:mb-16"
         >
           <motion.div variants={itemVars} className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-            <div className="w-6 sm:w-8 h-[1px] bg-[#0066ff]" />
-            <span className="text-[10px] sm:text-[11px] text-[#0066ff] font-bold tracking-[0.2em] uppercase">
+            <div className="w-6 sm:w-8 h-px bg-[#00e5ff]" />
+            <span className="text-[10px] sm:text-[11px] text-[#00e5ff] font-light tracking-[0.2em] uppercase">
               Deep Dive
             </span>
-            <div className="w-6 sm:w-8 h-[1px] bg-[#0066ff]" />
+            <div className="w-6 sm:w-8 h-px bg-[#00e5ff]" />
           </motion.div>
-          <motion.h2 
+          <motion.h2
             variants={itemVars}
-            className="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight leading-[1.1] text-[#02040a]"
+            className="text-3xl sm:text-4xl md:text-5xl font-thin tracking-tight leading-[1.1] text-white"
           >
-            Curriculum — <span className="text-[#0066ff] font-medium">Specialisations</span>
+            
+            <span className="text-[#00e5ff] font-light">Curriculum</span>
           </motion.h2>
         </motion.div>
 
-        {/* Custom Tab Navigation (Fluid layout for mobile wrapping) */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+        {/* Tab Navigation */}
+        <motion.div
+          initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12 sm:mb-16"
         >
           {specialisations.map((spec) => (
             <button
               key={spec.id}
               onClick={() => setActiveTab(spec.id)}
-              className={`px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-[12px] sm:text-[13px] md:text-[14px] font-medium tracking-wide transition-all duration-300 ${
+              className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-[12px] sm:text-[13px] font-light tracking-wide transition-all duration-300"
+              style={
                 activeTab === spec.id
-                  ? "bg-[#0066ff] text-white shadow-[0_4px_20px_rgba(0,102,255,0.3)]"
-                  : "bg-white text-[#02040a]/60 border border-gray-200 hover:bg-gray-50 hover:text-[#02040a] hover:border-gray-300 shadow-sm"
-              }`}
+                  ? {
+                      background: "rgba(0,229,255,0.15)",
+                      border: "1px solid rgba(0,229,255,0.45)",
+                      color: "#00e5ff",
+                      boxShadow: "0 0 20px rgba(0,229,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1)",
+                      backdropFilter: "blur(20px)",
+                      WebkitBackdropFilter: "blur(20px)",
+                    }
+                  : {
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      color: "rgba(255,255,255,0.4)",
+                      backdropFilter: "blur(20px)",
+                      WebkitBackdropFilter: "blur(20px)",
+                    }
+              }
             >
               {spec.title}
             </button>
           ))}
         </motion.div>
 
-        {/* Tab Content (Animated Grid) */}
+        {/* Tab Content */}
         <div className="min-h-[400px]">
           <AnimatePresence mode="wait">
             <motion.div
@@ -267,29 +287,42 @@ export default function Curriculum() {
               initial={{ opacity: 0, y: 15, filter: "blur(8px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: -15, filter: "blur(8px)" }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-auto-fit gap-5 sm:gap-6"
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
             >
               {activeData?.years.map((year, index) => (
-                <div 
+                <div
                   key={index}
-                  className="rounded-[24px] bg-white border border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_15px_40px_rgba(0,102,255,0.06)] transition-shadow duration-300 p-6 sm:p-8"
+                  className="rounded-3xl p-6 sm:p-8 group hover:-translate-y-1 transition-all duration-500"
+                  style={glass}
                 >
-                  <h3 className="text-[#0066ff] font-medium text-lg sm:text-xl mb-5 sm:mb-6 pb-3 sm:pb-4 border-b border-gray-100">
+                  {/* Year title */}
+                  <h3
+                    className="font-light text-lg sm:text-xl mb-5 sm:mb-6 pb-4"
+                    style={{
+                      color: "#00e5ff",
+                      borderBottom: "1px solid rgba(255,255,255,0.07)",
+                      textShadow: "0 0 20px rgba(0,229,255,0.4)",
+                    }}
+                  >
                     {year.title}
                   </h3>
+
                   <ul className="space-y-3 sm:space-y-4">
                     {year.subjects.map((subject, sIdx) => {
                       const parts = subject.split(" — ");
                       return (
                         <li key={sIdx} className="flex items-start gap-3">
-                          {/* Light Mode Bullet Point */}
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#0066ff]/60 mt-2 flex-shrink-0" />
-                          <p className="text-[13px] sm:text-[14px] md:text-[15px] leading-relaxed font-light text-[#02040a]/70">
+                          {/* Dot */}
+                          <div
+                            className="w-1.5 h-1.5 rounded-full mt-[7px] flex-shrink-0"
+                            style={{ background: "rgba(0,229,255,0.5)" }}
+                          />
+                          <p className="text-[13px] sm:text-[14px] leading-relaxed font-thin text-white/50">
                             {parts.length > 1 ? (
                               <>
-                                <span className="font-medium text-[#02040a]">{parts[0]}</span>
-                                <span className="opacity-50 text-[#02040a]"> — </span>
+                                <span className="font-light text-white/80">{parts[0]}</span>
+                                <span className="text-white/25"> — </span>
                                 {parts[1]}
                               </>
                             ) : (
@@ -305,29 +338,6 @@ export default function Curriculum() {
             </motion.div>
           </AnimatePresence>
         </div>
-
-        {/* Lead Capture / Syllabus CTA (Fully Responsive Stack) */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-16 sm:mt-20 pt-10 sm:pt-12 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 text-center md:text-left"
-        >
-          <div>
-            <h4 className="text-xl sm:text-2xl font-medium text-[#02040a] mb-2 tracking-tight">Want the full breakdown?</h4>
-            <p className="text-[#02040a]/60 text-[13px] sm:text-[14px] md:text-[15px] font-light max-w-lg">
-              Get the comprehensive syllabus including all modules, electives, and outcomes sent directly to you.
-            </p>
-          </div>
-          <button className="w-full md:w-auto flex-shrink-0 bg-white hover:bg-gray-50 text-[#02040a] border border-gray-200 shadow-sm px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold text-[12px] sm:text-[13px] uppercase tracking-widest transition-all hover:border-[#0066ff]/30 hover:-translate-y-0.5 group flex items-center justify-center gap-3">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#02040a]/50 group-hover:text-[#0066ff] transition-colors">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Download Syllabus PDF
-          </button>
-        </motion.div>
 
       </div>
     </section>
