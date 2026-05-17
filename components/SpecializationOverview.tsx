@@ -29,8 +29,11 @@ const ACCENT = "#7b2fff";
 export default function SpecialisationsOverview() {
   const shouldReduceMotion = useReducedMotion();
 
+  // ── Drive Download Link ───────────────────────────────────────────────────
+  const driveFileId = "194XCFquD6K4srk_lmdhqwqUxlCZ2Ngoq";
+  const brochureDownloadUrl = `https://drive.google.com/uc?export=download&id=${driveFileId}`;
+
   // ── Variants ──────────────────────────────────────────────────────────────
-  // No blur — expensive GPU op that tanks low-end devices
   const containerVars: Variants = {
     hidden: { opacity: 0 },
     show: {
@@ -54,7 +57,6 @@ export default function SpecialisationsOverview() {
     },
   };
 
-  // Bottom CTA — same treatment, no blur
   const ctaVars: Variants = {
     hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 18 },
     show: {
@@ -134,7 +136,7 @@ export default function SpecialisationsOverview() {
                   "0 2px 16px rgba(123,47,255,0.07), 0 8px 32px rgba(123,47,255,0.04)",
               }}
             >
-              {/* Hover glow — CSS opacity only, no border duplication */}
+              {/* Hover glow */}
               <div
                 aria-hidden
                 className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
@@ -169,65 +171,56 @@ export default function SpecialisationsOverview() {
                   Target Career Roles
                 </p>
 
-                {/* Role pills — CSS hover, no JS style mutations */}
-                <div className="flex flex-wrap gap-2 sm:gap-2.5 mb-6 sm:mb-8">
+                <div className="flex flex-wrap gap-2 sm:gap-2.5 mb-2">
                   {spec.roles.map((role, rIndex) => (
                     <span key={rIndex} className="role-pill px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-light">
                       {role}
                     </span>
                   ))}
                 </div>
-
-                {/* Card CTA */}
-                <div
-                  className="pt-5 sm:pt-6 flex items-center justify-between"
-                  style={{ borderTop: "1px solid rgba(123,47,255,0.08)" }}
-                >
-                  <span
-                    className="text-[12px] sm:text-[13px] font-light tracking-widest uppercase"
-                    style={{ color: ACCENT }}
-                  >
-                    Download Syllabus
-                  </span>
-                  {/* Arrow: CSS transform only — compositor, no JS */}
-                  <span
-                    className="cta-arrow text-lg sm:text-xl font-thin transition-transform duration-300"
-                    style={{ color: ACCENT }}
-                  >
-                    →
-                  </span>
-                </div>
               </div>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* ── Bottom CTA ────────────────────────────────────────────────── */}
+        {/* ── Bottom CTAs ────────────────────────────────────────────────── */}
         <motion.div
           variants={ctaVars}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-60px" }}
-          className="mt-12 sm:mt-16 text-center flex flex-col items-center"
+          className="mt-16 sm:mt-20 flex flex-col items-center justify-center text-center"
         >
           <p
-            className="text-[14px] sm:text-[15px] font-thin mb-5 sm:mb-6 px-4"
+            className="text-[14px] sm:text-[15px] font-thin mb-8 px-4"
             style={{ color: "rgba(30,0,80,0.45)" }}
           >
-            Not sure which path aligns best with your goals?
+            Not sure which path aligns best with your goals? Let's figure it out together.
           </p>
 
-          {/* Button: CSS hover only — no JS style mutations, no whileHover scale
-              (scale on a button triggers layout on some browsers) */}
-          <button className="advisor-btn w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest cursor-pointer">
-            Speak to an Academic Advisor
-            <span className="btn-arrow text-base leading-none font-thin transition-transform duration-300">→</span>
-          </button>
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto px-4 sm:px-0">
+            {/* Brochure Button updated to anchor link */}
+            <a 
+              href={brochureDownloadUrl}
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+              className="brochure-btn w-full sm:w-auto flex items-center justify-center gap-2.5 px-10 py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest cursor-pointer"
+            >
+              Download Brochure
+              <span className="btn-arrow text-base leading-none font-thin transition-transform duration-300">→</span>
+            </a>
+
+            <button className="advisor-btn w-full sm:w-auto flex items-center justify-center gap-2.5 px-10 py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest cursor-pointer">
+              Speak to an Advisor
+              <span className="btn-arrow text-base leading-none font-thin transition-transform duration-300">→</span>
+            </button>
+          </div>
         </motion.div>
 
       </div>
 
-      {/* ── Global CSS ── all hover states here, zero JS style mutations ── */}
+      {/* ── Global CSS ────────────────────────────────────────────────── */}
       <style>{`
         /* Cards */
         .spec-card {
@@ -241,11 +234,6 @@ export default function SpecialisationsOverview() {
           box-shadow: 0 4px 24px rgba(123,47,255,0.12), 0 12px 40px rgba(123,47,255,0.07);
         }
 
-        /* Arrow inside card */
-        .spec-card:hover .cta-arrow {
-          transform: translateX(6px);
-        }
-
         /* Role pills */
         .role-pill {
           background: rgba(123,47,255,0.05);
@@ -257,6 +245,25 @@ export default function SpecialisationsOverview() {
           background: rgba(123,47,255,0.1);
           border-color: rgba(123,47,255,0.38);
           color: #7b2fff;
+        }
+
+        /* Universal Brochure button */
+        .brochure-btn {
+          background: #7b2fff;
+          color: #ffffff;
+          box-shadow: 0 4px 24px rgba(123,47,255,0.25);
+          transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        }
+        .brochure-btn:hover {
+          background: #6215d6;
+          box-shadow: 0 6px 32px rgba(123,47,255,0.35);
+          transform: scale(1.02);
+        }
+        .brochure-btn:active {
+          transform: scale(0.98);
+        }
+        .brochure-btn:hover .btn-arrow {
+          transform: translateX(4px);
         }
 
         /* Advisor button */
@@ -284,6 +291,9 @@ export default function SpecialisationsOverview() {
         @media (prefers-reduced-motion: reduce) {
           .spec-card,
           .spec-card:hover,
+          .brochure-btn,
+          .brochure-btn:hover,
+          .brochure-btn:active,
           .advisor-btn,
           .advisor-btn:hover,
           .advisor-btn:active {
