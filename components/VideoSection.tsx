@@ -53,14 +53,14 @@ export default function VideoSection() {
 
         {/* preload="none" — don't race page render for bandwidth */}
         <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="none"
-          src="/10sec clip jain compressed 3.mp4"
-          className="absolute inset-0 w-full h-full object-cover opacity-80"
-        />
+  autoPlay
+  loop
+  muted
+  playsInline
+  preload="auto"           // ← was "none"
+  src="/10sec clip jain compressed 3.mp4"
+  className="absolute inset-0 w-full h-full object-cover opacity-80"
+/>
 
         {/* Static overlays — painted once, never touched again */}
         <div aria-hidden className="absolute top-0 inset-x-0 h-px z-10 pointer-events-none"
