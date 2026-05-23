@@ -58,7 +58,7 @@ export default function VideoSection() {
   muted
   playsInline
   preload="auto"           // ← was "none"
-  src="/jain-video.mp4"
+  src="/jain-mobile.mp4"
   className="absolute inset-0 w-full h-full object-cover opacity-80"
 />
 
