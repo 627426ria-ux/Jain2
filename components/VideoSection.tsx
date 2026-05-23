@@ -58,7 +58,7 @@ export default function VideoSection() {
           muted
           playsInline
           preload="none"
-          src=""
+          src="/10sec clip jain compressed 3.mp4"
           className="absolute inset-0 w-full h-full object-cover opacity-80"
         />
 

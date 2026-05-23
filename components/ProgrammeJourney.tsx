@@ -290,13 +290,14 @@ export default function ProgrammeJourney() {
 
                 <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full md:w-auto">
                   {/* Primary CTA Button */}
-                  <button
+                  <a
+                    href="#cta"
                     className="cta-btn-primary w-full sm:w-auto flex items-center justify-center gap-2.5 text-white px-8 sm:px-10 py-4 rounded-full font-light text-[12px] md:text-[13px] uppercase tracking-widest cursor-pointer"
                     style={{ background: ACCENT }}
                   >
                     Apply Now
                     <span className="btn-arrow text-base leading-none font-thin transition-transform duration-300">→</span>
-                  </button>
+                  </a>
 
                   {/* Secondary CTA Button */}
                   <a

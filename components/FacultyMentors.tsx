@@ -3,32 +3,34 @@ import { motion, Variants, useReducedMotion } from "framer-motion";
 
 const mentors = [
   {
-    name: "Dr. Sarah Chen",
-    role: "Former AI Lead",
-    company: "Google",
-    expertise: "Generative AI & LLMs",
-    imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop",
+    name: "Adwaith S",
+    role: "Technical solution manager.",
+    company: "Microsoft",
+    imageUrl: "/Adwaid S.jpeg",
   },
   {
-    name: "Marcus Johnson",
-    role: "Director of Product Design",
-    company: "Meta",
-    expertise: "Human-Computer Interaction",
-    imageUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop",
+    name: "Tom M Joseph ",
+    role: "Edupreneur & Director",
+    company: "Jain University Kochi",
+    imageUrl: "/Tom.JPG",
   },
   {
-    name: "Priya Sharma",
-    role: "Senior Data Scientist",
-    company: "Amazon",
-    expertise: "Big Data & Predictive Analytics",
-    imageUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=800&auto=format&fit=crop",
+    name: "Ashish Johnson ",
+    role: "ML Engineer",
+    company: "SAP",
+    imageUrl: "/Ashish.jpeg",
   },
   {
-    name: "David Kim",
+    name: "Alan K Antony",
     role: "Chief Technology Officer",
     company: "TechNova Innovate",
-    expertise: "Full Stack Cloud Architecture",
-    imageUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop",
+    imageUrl: "/Alan.png",
+  },
+  {
+    name: "Dr Shailesh Sivan",
+    role: "AI Trainer & Consultant",
+    company: "Cusat",
+    imageUrl: "/ChatGPT Image May 23, 2026, 04_44_30 PM.png",
   },
 ];
 
@@ -101,13 +103,13 @@ export default function FacultyMentors() {
           </motion.h2>
         </motion.div>
 
-        {/* 4-Column Mentor Grid */}
+        {/* 5-Column Mentor Grid */}
         <motion.div
           variants={containerVars}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5"
+          className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5"
         >
           {mentors.map((mentor, index) => (
             <motion.div
@@ -118,7 +120,6 @@ export default function FacultyMentors() {
                 background: "#ffffff",
                 border: "1px solid rgba(123,47,255,0.15)",
                 boxShadow: "0 2px 16px rgba(123,47,255,0.08), 0 8px 32px rgba(123,47,255,0.05)",
-                // Cards carry both entry animation AND hover translate — pre-promote
                 willChange: "opacity, transform, filter",
                 transform: "translateZ(0)",
               }}
@@ -129,16 +130,12 @@ export default function FacultyMentors() {
                 style={{ border: "1px solid rgba(123,47,255,0.3)" }}
               />
 
-              {/* Image
-                  grayscale→color + scale is a CSS filter transition — one of the most
-                  expensive hover effects possible. will-change: filter, transform tells
-                  the browser to keep this image on its own GPU tile so the filter
-                  transition never touches the main thread paint. */}
+              {/* Image */}
               <div className="relative w-full aspect-[3/4] sm:aspect-[4/5] overflow-hidden flex-shrink-0">
                 <img
                   src={mentor.imageUrl}
                   alt={mentor.name}
-                  className="w-full h-full object-cover opacity-90 sm:grayscale sm:opacity-80 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:group-hover:grayscale-0 sm:group-hover:scale-110 sm:group-hover:opacity-95 group-hover:scale-110"
+                  className="w-full h-full object-cover opacity-90  sm:opacity-80 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:group-hover:grayscale-0 sm:group-hover:scale-110 sm:group-hover:opacity-95 group-hover:scale-110"
                   style={{ willChange: "filter, transform" }}
                 />
                 {/* Light vignette */}
@@ -226,7 +223,8 @@ export default function FacultyMentors() {
             </p>
           </div>
 
-          <motion.button
+          <motion.a
+            href="#cta"
             whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
             whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
             className="relative z-10 w-full md:w-auto flex-shrink-0 flex items-center justify-center gap-2.5 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-light text-[11px] sm:text-[13px] uppercase tracking-widest transition-all group"
@@ -247,7 +245,7 @@ export default function FacultyMentors() {
           >
             Apply Now
             <span className="text-base leading-none font-thin group-hover:translate-x-1 transition-transform">→</span>
-          </motion.button>
+          </motion.a>
         </motion.div>
 
       </div>

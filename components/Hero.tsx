@@ -92,7 +92,8 @@ export default function Hero() {
           style={{ willChange: "opacity, transform, filter" }}
         >
           {/* Primary Button */}
-          <motion.button
+          <motion.a
+            href="#cta"
             whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
             whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
             className="w-full sm:w-auto justify-center text-white px-8 py-4 rounded-full font-light text-[12px] sm:text-[13px] uppercase tracking-widest transition-all flex items-center gap-2.5 group"
@@ -115,7 +116,7 @@ export default function Hero() {
             <span className="text-base leading-none pb-[1px] font-thin group-hover:translate-x-1 transition-transform">
               {"→"}
             </span>
-          </motion.button>
+          </motion.a>
 
           {/* Secondary Button — Download Brochure */}
           <motion.a

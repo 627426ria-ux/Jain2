@@ -42,7 +42,7 @@ export default function Home() {
       <AdmissionsEligibility/>
       <FAQ/>
       {/* <ImageCTA/> */}
-      {/* <FinalCTA/> */}
+      <FinalCTA/>
     </main>
   );
 }

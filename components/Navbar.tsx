@@ -70,11 +70,11 @@ export default function Navbar() {
           {/* Logo */}
           <div className="relative z-50">
             <Image
-              src="/Screenshot 2026-05-16 at 3.53.08 PM.png"
+              src="/JAIN School Of Future Logo Black .png"
               alt="Logo"
-              width={80}
-              height={32}
-              className="h-8 w-auto object-contain"
+              width={140}
+height={56}
+className="h-12 w-auto object-contain"
               priority
             />
           </div>
@@ -101,7 +101,7 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center">
             <motion.a
-              href="/application"
+              href="#cta"
               whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
               whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
               className="text-white text-[11px] font-light uppercase tracking-widest px-6 py-3 rounded-full flex items-center gap-2 transition-all duration-300 group"
