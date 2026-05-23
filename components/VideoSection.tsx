@@ -1,173 +1,77 @@
 "use client";
-import { useRef, useEffect } from "react";
-import { motion, useScroll, useTransform, useReducedMotion, useSpring } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function VideoSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const shouldReduceMotion = useReducedMotion();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // ── Mobile autoplay fix ───────────────────────────────────────────────
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-
-    // Imperatively set these — some mobile browsers ignore HTML attributes
-    v.muted = true;
-    v.loop = true;
-    v.playsInline = true;
-
-    const play = () => v.play().catch(() => {});
-
-    if (v.readyState >= 3) {
-      play();
-    } else {
-      v.addEventListener("canplaythrough", play, { once: true });
-    }
-
-    // Kick off loading
-    v.load();
-
-    // Last resort: play on first touch
-    const onTouch = () => { play(); };
-    window.addEventListener("touchstart", onTouch, { once: true });
-
-    return () => {
-      v.removeEventListener("canplaythrough", play);
-      window.removeEventListener("touchstart", onTouch);
-    };
-  }, []);
-
-  // ── Scroll animation ──────────────────────────────────────────────────
+  // Track the scroll progress of this specific section
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
+    target: containerRef,
+    offset: ["start end", "end start"], // Starts when top of section hits bottom of screen
   });
 
-  const smooth = useSpring(scrollYProgress, {
-    stiffness: 50,
-    damping: 18,
-    restDelta: 0.001,
-  });
-
-  const scale   = useTransform(smooth, [0, 0.45], shouldReduceMotion ? [1, 1] : [0.88, 1]);
-  const y       = useTransform(smooth, [0, 0.45], shouldReduceMotion ? [0, 0] : [50, 0]);
-  const opacity = useTransform(smooth, [0, 0.25], shouldReduceMotion ? [1, 1] : [0.4, 1]);
+  // 1. Perspective/Tilt: Makes it feel like it's being "dragged" from a 3D space
+  const rotateX = useTransform(scrollYProgress, [0, 0.5], [15, 0]);
+  
+  // 2. Scaling: Grows as it enters the viewport
+  const scale = useTransform(scrollYProgress, [0, 0.4], [0.8, 1]);
+  
+  // 3. Vertical Offset: The "Drag" speed (Parallax)
+  const y = useTransform(scrollYProgress, [0, 0.5], [100, 0]);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative z-20 w-full py-16 md:py-24 overflow-hidden"
+    <section 
+      ref={containerRef}
+      className="relative z-20 w-full max-w-6xl mx-auto px-4 md:px-6 py-20"
+      style={{ perspective: "1000px" }} // Required for the 3D tilt
     >
-      {/* ── Ambient glow behind video ── */}
-      <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none"
+      <motion.div
         style={{
-          background:
-            "radial-gradient(ellipse 80% 60% at 50% 60%, rgba(123,47,255,0.10), transparent 70%)",
+          rotateX,
+          scale,
+          y,
         }}
-      />
+        className="relative w-full aspect-[16/9] md:aspect-[2.4/1] rounded-2xl md:rounded-[40px] overflow-hidden bg-[#02040a]/80 backdrop-blur-xl border border-white/10 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)] group cursor-pointer transition-shadow duration-500 hover:shadow-[#0066ff]/10"
+      >
+        {/* ========================================== */}
+        {/* 🎬 YOUR VIDEO GOES HERE                    */}
+        {/* ========================================== */}
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          playsInline
+          // Change the src below to your video file path
+          src="/jain-video.mp4" 
+          className="absolute inset-0 w-full h-full object-cover opacity-80"
+        />
 
-      <div className="relative max-w-6xl mx-auto px-4 md:px-8">
+        {/* --- THEMATIC ACCENTS --- */}
+        {/* Top Edge Glow */}
+        <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent z-10" />
+        
+        {/* Bottom Edge Glow (Updated to your Electric Blue #0066ff) */}
+        <div className="absolute bottom-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#0066ff]/40 to-transparent z-10" />
+        
+        {/* Deep Ambient Glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,102,255,0.08),transparent_70%)] pointer-events-none z-10" />
 
-        {/* ── Label ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="flex items-center justify-center gap-3 mb-8 md:mb-12"
-        >
-          <div className="w-8 h-px bg-[#7b2fff]" />
-          <span className="text-[11px] font-light tracking-[0.22em] uppercase text-[#7b2fff]">
-            Campus Life
-          </span>
-          <div className="w-8 h-px bg-[#7b2fff]" />
-        </motion.div>
+        {/* --- PLAY BUTTON --- */}
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <motion.div 
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 flex items-center justify-center group-hover:bg-[#0066ff]/10 group-hover:border-[#0066ff]/40 transition-all duration-700"
+          >
+            {/* Play Triangle Icon */}
+            <div className="ml-1.5 w-0 h-0 border-t-[8px] border-t-transparent border-l-[14px] border-l-white border-b-[8px] border-b-transparent group-hover:border-l-[#0066ff] transition-colors duration-500 shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
+          </motion.div>
+        </div>
 
-        {/* ── Video card ── */}
-        <motion.div
-          style={{ scale, y, opacity }}
-          className="video-card relative w-full rounded-2xl md:rounded-[32px] overflow-hidden"
-        >
-          {/* Aspect ratio wrapper */}
-          <div className="relative w-full aspect-video md:aspect-[2.35/1]">
-
-            {/* Black base so nothing flashes white */}
-            <div className="absolute inset-0 bg-black" />
-
-            <video
-              ref={videoRef}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              src="/jain-video.mp4"
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{ opacity: 0.88 }}
-            />
-
-            {/* Top edge highlight */}
-            <div
-              aria-hidden
-              className="absolute top-0 inset-x-0 h-px z-10 pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(to right, transparent, rgba(255,255,255,0.22), transparent)",
-              }}
-            />
-
-            {/* Bottom fade to page bg */}
-            <div
-              aria-hidden
-              className="absolute bottom-0 inset-x-0 h-1/3 z-10 pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(to top, rgba(248,245,255,0.55), transparent)",
-              }}
-            />
-
-            {/* Subtle vignette */}
-            <div
-              aria-hidden
-              className="absolute inset-0 z-10 pointer-events-none"
-              style={{
-                background:
-                  "radial-gradient(ellipse at center, transparent 55%, rgba(10,0,30,0.35) 100%)",
-              }}
-            />
-
-            {/* Purple tint overlay */}
-            <div
-              aria-hidden
-              className="absolute inset-0 z-10 pointer-events-none"
-              style={{ background: "rgba(123,47,255,0.04)" }}
-            />
-          </div>
-        </motion.div>
-
-      </div>
-
-      <style>{`
-        .video-card {
-          box-shadow:
-            0 0 0 1px rgba(123,47,255,0.14),
-            0 30px 80px -10px rgba(0,0,0,0.45),
-            0 0 60px -10px rgba(123,47,255,0.12);
-          transition: box-shadow 0.5s ease;
-        }
-        .video-card:hover {
-          box-shadow:
-            0 0 0 1px rgba(123,47,255,0.25),
-            0 30px 80px -10px rgba(0,0,0,0.55),
-            0 0 80px -5px rgba(123,47,255,0.18);
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .video-card { transition: none; }
-        }
-      `}</style>
+        {/* Subtle Video Overlay Tint */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#02040a]/80 via-transparent to-transparent pointer-events-none z-10" />
+      </motion.div>
     </section>
   );
 }
