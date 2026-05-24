@@ -28,8 +28,8 @@ const mentors = [
   },
   {
     name: "Dr Shailesh Sivan",
-    role: "AI Trainer & Consultant",
-    company: "Cusat",
+    role: "Chief Technology Architect",
+    company: "Yours Zeros and Ones",
     imageUrl: "/ChatGPT Image May 23, 2026, 04_44_30 PM.png",
   },
 ];
