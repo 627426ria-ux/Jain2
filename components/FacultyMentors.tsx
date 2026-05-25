@@ -22,7 +22,7 @@ const mentors = [
   },
   {
     name: "Alan K Antony",
-    role: "Chief Technology Officer",
+    role: "AI Consultant & Project Head",
     company: "AccelerateX",
     imageUrl: "/Tom.JPG",
   },
