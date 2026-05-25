@@ -24,7 +24,7 @@ const mentors = [
     name: "Alan K Antony",
     role: "Chief Technology Officer",
     company: " AccelerateX",
-    imageUrl: "/Tom.png",
+    imageUrl: "/Tom.JPG",
   },
   {
     name: "Dr Shailesh Sivan",
