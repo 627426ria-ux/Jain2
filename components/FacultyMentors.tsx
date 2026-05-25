@@ -12,7 +12,7 @@ const mentors = [
     name: "Tom M Joseph ",
     role: "Edupreneur & Director",
     company: "Jain University Kochi",
-    imageUrl: "/Tom.JPG",
+    imageUrl: "/Alan.png",
   },
   {
     name: "Ashish Johnson ",
@@ -23,8 +23,8 @@ const mentors = [
   {
     name: "Alan K Antony",
     role: "Chief Technology Officer",
-    company: "TechNova Innovate",
-    imageUrl: "/Alan.png",
+    company: " AccelerateX",
+    imageUrl: "/Tom.png",
   },
   {
     name: "Dr Shailesh Sivan",
