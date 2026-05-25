@@ -23,7 +23,7 @@ const mentors = [
   {
     name: "Alan K Antony",
     role: "Chief Technology Officer",
-    company: " AccelerateX",
+    company: "AccelerateX",
     imageUrl: "/Tom.JPG",
   },
   {
@@ -135,7 +135,7 @@ export default function FacultyMentors() {
                 <img
                   src={mentor.imageUrl}
                   alt={mentor.name}
-                  className="w-full h-full object-cover opacity-90  sm:opacity-80 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:group-hover:grayscale-0 sm:group-hover:scale-110 sm:group-hover:opacity-95 group-hover:scale-110"
+                  className="w-full h-full object-cover opacity-90 sm:opacity-80 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:group-hover:grayscale-0 sm:group-hover:scale-110 sm:group-hover:opacity-95 group-hover:scale-110"
                   style={{ willChange: "filter, transform" }}
                 />
                 {/* Light vignette */}
@@ -151,13 +151,16 @@ export default function FacultyMentors() {
               {/* Info panel */}
               <div className="relative z-10 flex flex-col px-3 py-3 sm:px-5 sm:py-4 flex-1">
 
-                {/* Company badge */}
+                {/* Company badge — wraps gracefully for long names */}
                 <span
-                  className="inline-flex items-center self-start mb-2 sm:mb-3 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[11px] font-light tracking-widest uppercase transition-all duration-300"
+                  className="inline-flex items-center self-start mb-2 sm:mb-3 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[8px] sm:text-[10px] font-light tracking-wide uppercase leading-tight transition-all duration-300 max-w-full"
                   style={{
                     background: "rgba(123,47,255,0.08)",
                     border: "1px solid rgba(123,47,255,0.22)",
                     color: ACCENT,
+                    wordBreak: "break-word",
+                    whiteSpace: "normal",
+                    display: "inline-block",
                   }}
                 >
                   {mentor.company}
@@ -201,7 +204,7 @@ export default function FacultyMentors() {
             willChange: "opacity, transform, filter",
           }}
         >
-          {/* Ambient glows inside banner — static, no hints needed */}
+          {/* Ambient glows inside banner */}
           <div
             className="absolute top-0 right-0 w-64 h-64 pointer-events-none"
             style={{ background: "radial-gradient(ellipse at top right, rgba(123,47,255,0.06), transparent 65%)" }}
