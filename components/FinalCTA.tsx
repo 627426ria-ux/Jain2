@@ -44,22 +44,22 @@ export default function FinalCTA() {
       <div className="flex items-center gap-3">
         {[
           {
-            href: "https://facebook.com/jainschooloffuturetechnology",
+            href: "https://www.facebook.com/share/1CVS9bVWBx/",
             label: "Facebook",
             svg: <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" fill="currentColor"/>,
           },
           {
-            href: "https://instagram.com/jainsoft",
+            href: "https://www.instagram.com/jainsoft?utm_source=qr&igsh=MWt1dXBmZHc5Z2E1",
             label: "Instagram",
             svg: <><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" strokeWidth="1.5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" strokeWidth="1.5"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></>,
           },
           {
-            href: "#",
+            href: "https://www.linkedin.com/company/jain-school-of-future-technology/?viewAsMember=true",
             label: "LinkedIn",
             svg: <><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" fill="currentColor"/><rect x="2" y="9" width="4" height="12" fill="currentColor"/><circle cx="4" cy="4" r="2" fill="currentColor"/></>,
           },
           {
-            href: "#",
+            href: "https://youtube.com/@jainsoft?si=NrMxYQecSk8Z0esL",
             label: "YouTube",
             svg: <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33zM9.75 15.02V8.48l6.19 3.27-6.19 3.27z" fill="currentColor"/>,
           },
