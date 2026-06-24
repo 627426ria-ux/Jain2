@@ -1,11 +1,59 @@
 "use client";
 import { motion, Variants, useReducedMotion } from "framer-motion";
+import { useState, FormEvent } from "react";
 
 const ACCENT = "#7b2fff";
 const WHATSAPP = "#25D366";
 
+// Your deployed Google Apps Script Web App URL
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbQl9gp9e57SEVSaw9HQ7ZNdMWY6pV1uDGSzOMIGeeM3QLobhtY2pyXFolm3skgBmr/exec";
+
 export default function FinalCTA() {
   const prefersReducedMotion = useReducedMotion();
+
+  // Form handling states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    // Package the data as standard URL parameters
+    const params = new URLSearchParams();
+    params.append("fullName", (formData.get("fullName") as string) || "");
+    params.append("mobileNumber", (formData.get("mobile") as string) || ""); // Mapped from name="mobile"
+    params.append("emailAddress", (formData.get("email") as string) || "");   // Mapped from name="email"
+    params.append("cityState", (formData.get("cityState") as string) || "");
+    params.append("specialisation", (formData.get("specialisation") as string) || "");
+    params.append("source", (formData.get("source") as string) || "");
+    params.append("message", (formData.get("message") as string) || "");
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors", // Completely bypass the browser's CORS block
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: params.toString(),
+      });
+      
+      // With no-cors, we don't get a readable JSON response back, 
+      // but if the network doesn't crash, the data successfully reached Google.
+      setSubmitStatus("success");
+      form.reset(); 
+    } catch (error) {
+      console.error("Submission failed:", error);
+      setSubmitStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const containerVars: Variants = {
     hidden: { opacity: 0 },
@@ -87,7 +135,7 @@ export default function FinalCTA() {
   return (
     <section id="cta" className="relative z-20 w-full py-24 md:py-32 bg-transparent overflow-hidden">
 
-      {/* Background glow — matches rest of site */}
+      {/* Background glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] md:w-[55vw] md:h-[55vw] pointer-events-none z-0"
         style={{ background: "radial-gradient(ellipse at center, rgba(123,47,255,0.07), transparent 65%)" }}
@@ -103,11 +151,7 @@ export default function FinalCTA() {
           viewport={{ once: true, margin: "-80px" }}
           className="flex flex-col items-center text-center mb-16 md:mb-20"
         >
-          <motion.div
-            variants={itemVars}
-            className="flex items-center gap-3 mb-6"
-            style={{ willChange: "opacity, transform, filter" }}
-          >
+          <motion.div variants={itemVars} className="flex items-center gap-3 mb-6" style={{ willChange: "opacity, transform, filter" }}>
             <div className="w-8 h-px" style={{ background: ACCENT }} />
             <span className="text-[11px] font-light tracking-[0.2em] uppercase" style={{ color: ACCENT }}>
               Begin Your Journey
@@ -115,23 +159,12 @@ export default function FinalCTA() {
             <div className="w-8 h-px" style={{ background: ACCENT }} />
           </motion.div>
 
-          <motion.h2
-            variants={itemVars}
-            className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1] mb-5"
-            style={{ color: "#1a0050", willChange: "opacity, transform, filter" }}
-          >
+          <motion.h2 variants={itemVars} className="text-3xl md:text-5xl font-thin tracking-tight leading-[1.1] mb-5" style={{ color: "#1a0050", willChange: "opacity, transform, filter" }}>
             Applications are open.{" "}
             <span className="font-light" style={{ color: ACCENT }}>Start today.</span>
           </motion.h2>
 
-          <motion.div
-            variants={itemVars}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
-            style={{
-              background: "rgba(123,47,255,0.08)",
-              border: "1px solid rgba(123,47,255,0.25)",
-            }}
-          >
+          <motion.div variants={itemVars} className="inline-flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: "rgba(123,47,255,0.08)", border: "1px solid rgba(123,47,255,0.25)" }}>
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: ACCENT }} />
             <span className="text-[11px] font-light tracking-widest uppercase" style={{ color: ACCENT }}>
               August 2026 Batch — Limited Seats
@@ -151,184 +184,98 @@ export default function FinalCTA() {
           {/* ── LEFT: Contact Cards ── */}
           <div className="flex-1 flex flex-col gap-4 sm:gap-5 lg:max-w-sm">
 
-            {/* WhatsApp — highest priority */}
-            <motion.a
-              variants={itemVars}
-              href="https://wa.me/917034047444"
-              target="_blank"
-              rel="noreferrer"
-              className="contact-tile group relative flex items-center gap-5 p-6 rounded-2xl overflow-hidden"
-              style={{
-                background: "#f0fdf4",
-                border: "1px solid rgba(37,211,102,0.35)",
-              }}
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
-                style={{ background: "rgba(37,211,102,0.08)" }}
-              />
-              <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 relative z-10"
-                style={{
-                  background: "rgba(37,211,102,0.2)",
-                  border: "1px solid rgba(37,211,102,0.4)",
-                  color: "#16a34a",
-                }}
-              >
+            {/* WhatsApp */}
+            <motion.a variants={itemVars} href="https://wa.me/917034047444" target="_blank" rel="noreferrer" className="contact-tile group relative flex items-center gap-5 p-6 rounded-2xl overflow-hidden" style={{ background: "#f0fdf4", border: "1px solid rgba(37,211,102,0.35)" }}>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" style={{ background: "rgba(37,211,102,0.08)" }} />
+              <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 relative z-10" style={{ background: "rgba(37,211,102,0.2)", border: "1px solid rgba(37,211,102,0.4)", color: "#16a34a" }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.347-.272.297-1.04 1.016-1.04 2.476 0 1.46 1.065 2.872 1.213 3.071.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
                 </svg>
               </div>
               <div className="relative z-10">
-                <p className="text-[10px] uppercase tracking-[0.2em] font-light mb-1" style={{ color: "#16a34a" }}>
-                  Chat on WhatsApp
-                </p>
+                <p className="text-[10px] uppercase tracking-[0.2em] font-light mb-1" style={{ color: "#16a34a" }}>Chat on WhatsApp</p>
                 <p className="text-[17px] font-light" style={{ color: "#1a0050" }}>+91-7034047444</p>
               </div>
-              <div className="ml-auto relative z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-1 group-hover:translate-x-0"
-                style={{ color: "#16a34a" }}>
+              <div className="ml-auto relative z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-1 group-hover:translate-x-0" style={{ color: "#16a34a" }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </div>
             </motion.a>
 
             {/* Email */}
-            <motion.a
-              variants={itemVars}
-              href="mailto:Admissions@jainsoft.co.in"
-              className="contact-tile group relative flex items-center gap-5 p-6 rounded-2xl overflow-hidden"
-              style={{ ...card }}
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
-                style={{ background: "radial-gradient(ellipse at top left, rgba(123,47,255,0.05), transparent 60%)" }}
-              />
-              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ border: "1px solid rgba(123,47,255,0.3)" }}
-              />
-              <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 relative z-10"
-                style={{ background: "rgba(123,47,255,0.08)", border: "1px solid rgba(123,47,255,0.2)", color: ACCENT }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                  <polyline points="22,6 12,13 2,6"/>
-                </svg>
+            <motion.a variants={itemVars} href="mailto:Admissions@jainsoft.co.in" className="contact-tile group relative flex items-center gap-5 p-6 rounded-2xl overflow-hidden" style={{ ...card }}>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" style={{ background: "radial-gradient(ellipse at top left, rgba(123,47,255,0.05), transparent 60%)" }} />
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ border: "1px solid rgba(123,47,255,0.3)" }} />
+              <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 relative z-10" style={{ background: "rgba(123,47,255,0.08)", border: "1px solid rgba(123,47,255,0.2)", color: ACCENT }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
               </div>
               <div className="relative z-10">
-                <p className="text-[10px] uppercase tracking-[0.2em] font-light mb-1" style={{ color: "rgba(30,0,80,0.35)" }}>
-                  Email Us
-                </p>
+                <p className="text-[10px] uppercase tracking-[0.2em] font-light mb-1" style={{ color: "rgba(30,0,80,0.35)" }}>Email Us</p>
                 <p className="text-[15px] font-light" style={{ color: "#1a0050" }}>Admissions@jainsoft.co.in</p>
               </div>
             </motion.a>
 
             {/* Phone */}
-            <motion.a
-              variants={itemVars}
-              href="tel:+917034047444"
-              className="contact-tile group relative flex items-center gap-5 p-6 rounded-2xl overflow-hidden"
-              style={{ ...card }}
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
-                style={{ background: "radial-gradient(ellipse at top left, rgba(123,47,255,0.05), transparent 60%)" }}
-              />
-              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ border: "1px solid rgba(123,47,255,0.3)" }}
-              />
-              <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 relative z-10"
-                style={{ background: "rgba(123,47,255,0.08)", border: "1px solid rgba(123,47,255,0.2)", color: ACCENT }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                </svg>
+            <motion.a variants={itemVars} href="tel:+917034047444" className="contact-tile group relative flex items-center gap-5 p-6 rounded-2xl overflow-hidden" style={{ ...card }}>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" style={{ background: "radial-gradient(ellipse at top left, rgba(123,47,255,0.05), transparent 60%)" }} />
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ border: "1px solid rgba(123,47,255,0.3)" }} />
+              <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 relative z-10" style={{ background: "rgba(123,47,255,0.08)", border: "1px solid rgba(123,47,255,0.2)", color: ACCENT }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
               </div>
               <div className="relative z-10">
-                <p className="text-[10px] uppercase tracking-[0.2em] font-light mb-1" style={{ color: "rgba(30,0,80,0.35)" }}>
-                  Call Us
-                </p>
+                <p className="text-[10px] uppercase tracking-[0.2em] font-light mb-1" style={{ color: "rgba(30,0,80,0.35)" }}>Call Us</p>
                 <p className="text-[15px] font-light" style={{ color: "#1a0050" }}>+91-7034047444</p>
               </div>
             </motion.a>
 
             {/* Visit Campus */}
-            <motion.a
-              variants={itemVars}
-              href="#"
-              target="_blank"
-              rel="noreferrer"
-              className="contact-tile group relative flex items-center gap-5 p-6 rounded-2xl overflow-hidden"
-              style={{ ...card }}
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
-                style={{ background: "radial-gradient(ellipse at top left, rgba(123,47,255,0.05), transparent 60%)" }}
-              />
-              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ border: "1px solid rgba(123,47,255,0.3)" }}
-              />
-              <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 relative z-10"
-                style={{ background: "rgba(123,47,255,0.08)", border: "1px solid rgba(123,47,255,0.2)", color: ACCENT }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
+            <motion.a variants={itemVars} href="#" target="_blank" rel="noreferrer" className="contact-tile group relative flex items-center gap-5 p-6 rounded-2xl overflow-hidden" style={{ ...card }}>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" style={{ background: "radial-gradient(ellipse at top left, rgba(123,47,255,0.05), transparent 60%)" }} />
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ border: "1px solid rgba(123,47,255,0.3)" }} />
+              <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 relative z-10" style={{ background: "rgba(123,47,255,0.08)", border: "1px solid rgba(123,47,255,0.2)", color: ACCENT }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               </div>
               <div className="relative z-10">
-                <p className="text-[10px] uppercase tracking-[0.2em] font-light mb-1" style={{ color: "rgba(30,0,80,0.35)" }}>
-                  Visit Campus
-                </p>
+                <p className="text-[10px] uppercase tracking-[0.2em] font-light mb-1" style={{ color: "rgba(30,0,80,0.35)" }}>Visit Campus</p>
                 <p className="text-[15px] font-light" style={{ color: "#1a0050" }}>Infopark, Kochi</p>
                 <p className="text-[12px] font-thin mt-0.5" style={{ color: "rgba(30,0,80,0.4)" }}>Get directions →</p>
               </div>
             </motion.a>
 
-            {/* Social Links — desktop only (stays in left column) */}
+            {/* Social Links — desktop only */}
             <SocialLinks className="hidden lg:block" />
           </div>
 
           {/* ── RIGHT: Enquiry Form ── */}
-          <motion.div
-            variants={itemVars}
-            className="flex-1 w-full"
-            style={{ willChange: "opacity, transform, filter" }}
-          >
-            <div
-              className="relative rounded-2xl p-6 sm:p-8 md:p-10 overflow-hidden h-full"
-              style={{ ...card }}
-            >
+          <motion.div variants={itemVars} className="flex-1 w-full" style={{ willChange: "opacity, transform, filter" }}>
+            <div className="relative rounded-2xl p-6 sm:p-8 md:p-10 overflow-hidden h-full" style={{ ...card }}>
               {/* Top accent line */}
-              <div
-                className="absolute top-0 inset-x-0 h-px"
-                style={{ background: "linear-gradient(to right, transparent, rgba(123,47,255,0.35), transparent)" }}
-              />
+              <div className="absolute top-0 inset-x-0 h-px" style={{ background: "linear-gradient(to right, transparent, rgba(123,47,255,0.35), transparent)" }} />
               {/* Corner glow */}
-              <div className="absolute top-0 right-0 w-64 h-64 pointer-events-none"
-                style={{ background: "radial-gradient(ellipse at top right, rgba(123,47,255,0.06), transparent 65%)" }}
-              />
+              <div className="absolute top-0 right-0 w-64 h-64 pointer-events-none" style={{ background: "radial-gradient(ellipse at top right, rgba(123,47,255,0.06), transparent 65%)" }} />
 
               <div className="relative z-10 mb-7">
-                <h3 className="text-2xl sm:text-3xl font-light mb-2 tracking-tight" style={{ color: "#1a0050" }}>
-                  Request an Application
-                </h3>
+                <h3 className="text-2xl sm:text-3xl font-light mb-2 tracking-tight" style={{ color: "#1a0050" }}>Request an Application</h3>
                 <p className="text-[13px] sm:text-[14px] font-thin leading-relaxed" style={{ color: "rgba(30,0,80,0.5)" }}>
                   Fill out the form below and our admissions team will contact you shortly.
                 </p>
               </div>
 
-              <div className="relative z-10 space-y-4">
+              <form onSubmit={handleSubmit} className="relative z-10 space-y-4">
                 {/* Full Name */}
                 <input
                   type="text"
+                  name="fullName"
                   placeholder="Full Name"
                   required
                   className="form-input w-full rounded-xl px-5 py-4 text-[15px] font-light focus:outline-none transition-all"
-                  style={{
-                    background: "rgba(123,47,255,0.03)",
-                    border: "1px solid rgba(123,47,255,0.15)",
-                    color: "#1a0050",
-                  }}
+                  style={{ background: "rgba(123,47,255,0.03)", border: "1px solid rgba(123,47,255,0.15)", color: "#1a0050" }}
                 />
 
                 {/* Mobile + Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <input
                     type="tel"
+                    name="mobile"
                     placeholder="Mobile Number"
                     required
                     className="form-input w-full rounded-xl px-5 py-4 text-[15px] font-light focus:outline-none transition-all"
@@ -336,6 +283,7 @@ export default function FinalCTA() {
                   />
                   <input
                     type="email"
+                    name="email"
                     placeholder="Email Address"
                     required
                     className="form-input w-full rounded-xl px-5 py-4 text-[15px] font-light focus:outline-none transition-all"
@@ -346,6 +294,7 @@ export default function FinalCTA() {
                 {/* City / State */}
                 <input
                   type="text"
+                  name="cityState"
                   placeholder="City / State"
                   className="form-input w-full rounded-xl px-5 py-4 text-[15px] font-light focus:outline-none transition-all"
                   style={{ background: "rgba(123,47,255,0.03)", border: "1px solid rgba(123,47,255,0.15)", color: "#1a0050" }}
@@ -354,19 +303,17 @@ export default function FinalCTA() {
                 {/* Specialisation */}
                 <div className="relative">
                   <select
+                    name="specialisation"
                     required
+                    defaultValue=""
                     className="form-input w-full rounded-xl px-5 py-4 text-[15px] font-light appearance-none focus:outline-none transition-all"
-                    style={{
-                      background: "rgba(123,47,255,0.03)",
-                      border: "1px solid rgba(123,47,255,0.15)",
-                      color: "rgba(30,0,80,0.45)",
-                    }}
+                    style={{ background: "rgba(123,47,255,0.03)", border: "1px solid rgba(123,47,255,0.15)", color: "rgba(30,0,80,0.45)" }}
                   >
                     <option value="" disabled>Preferred Specialisation</option>
-                    <option value="full-stack" style={{ color: "#1a0050" }}>Full Stack AI Development</option>
-                    <option value="gen-ai" style={{ color: "#1a0050" }}>Generative AI &amp; Tech Management</option>
-                    <option value="applied-ai" style={{ color: "#1a0050" }}>Applied AI &amp; Data Analytics</option>
-                    <option value="design-tech" style={{ color: "#1a0050" }}>Design Technology</option>
+                    <option value="Full Stack AI Development" style={{ color: "#1a0050" }}>Full Stack AI Development</option>
+                    <option value="Generative AI & Tech Management" style={{ color: "#1a0050" }}>Generative AI &amp; Tech Management</option>
+                    <option value="Applied AI & Data Analytics" style={{ color: "#1a0050" }}>Applied AI &amp; Data Analytics</option>
+                    <option value="Design Technology" style={{ color: "#1a0050" }}>Design Technology</option>
                   </select>
                   <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "rgba(30,0,80,0.3)" }}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -376,20 +323,18 @@ export default function FinalCTA() {
                 {/* Source */}
                 <div className="relative">
                   <select
+                    name="source"
                     required
+                    defaultValue=""
                     className="form-input w-full rounded-xl px-5 py-4 text-[15px] font-light appearance-none focus:outline-none transition-all"
-                    style={{
-                      background: "rgba(123,47,255,0.03)",
-                      border: "1px solid rgba(123,47,255,0.15)",
-                      color: "rgba(30,0,80,0.45)",
-                    }}
+                    style={{ background: "rgba(123,47,255,0.03)", border: "1px solid rgba(123,47,255,0.15)", color: "rgba(30,0,80,0.45)" }}
                   >
                     <option value="" disabled>How did you hear about us?</option>
-                    <option value="google" style={{ color: "#1a0050" }}>Google Search</option>
-                    <option value="social" style={{ color: "#1a0050" }}>Social Media (Instagram / Facebook)</option>
-                    <option value="youtube" style={{ color: "#1a0050" }}>YouTube</option>
-                    <option value="referral" style={{ color: "#1a0050" }}>Friend / Referral</option>
-                    <option value="other" style={{ color: "#1a0050" }}>Other</option>
+                    <option value="Google Search" style={{ color: "#1a0050" }}>Google Search</option>
+                    <option value="Social Media" style={{ color: "#1a0050" }}>Social Media (Instagram / Facebook)</option>
+                    <option value="YouTube" style={{ color: "#1a0050" }}>YouTube</option>
+                    <option value="Referral" style={{ color: "#1a0050" }}>Friend / Referral</option>
+                    <option value="Other" style={{ color: "#1a0050" }}>Other</option>
                   </select>
                   <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "rgba(30,0,80,0.3)" }}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -398,29 +343,31 @@ export default function FinalCTA() {
 
                 {/* Message */}
                 <textarea
+                  name="message"
                   placeholder="Any specific questions? (Optional)"
                   rows={3}
                   className="form-input w-full rounded-xl px-5 py-4 text-[15px] font-light focus:outline-none transition-all resize-none"
-                  style={{
-                    background: "rgba(123,47,255,0.03)",
-                    border: "1px solid rgba(123,47,255,0.15)",
-                    color: "#1a0050",
-                  }}
+                  style={{ background: "rgba(123,47,255,0.03)", border: "1px solid rgba(123,47,255,0.15)", color: "#1a0050" }}
                 />
 
                 {/* Submit */}
                 <button
                   type="submit"
-                  className="submit-btn w-full flex items-center justify-center gap-2.5 text-white py-4 rounded-full font-light text-[13px] uppercase tracking-widest group mt-2"
-                  style={{
-                    background: ACCENT,
-                    boxShadow: "0 10px 30px rgba(123,47,255,0.25)",
-                    transform: "translateZ(0)",
-                  }}
+                  disabled={isSubmitting}
+                  className="submit-btn w-full flex items-center justify-center gap-2.5 text-white py-4 rounded-full font-light text-[13px] uppercase tracking-widest group mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                  style={{ background: ACCENT, boxShadow: "0 10px 30px rgba(123,47,255,0.25)", transform: "translateZ(0)" }}
                 >
-                  Submit Application Request
-                  <span className="btn-arrow text-base leading-none font-thin">→</span>
+                  {isSubmitting ? "Submitting..." : "Submit Application Request"}
+                  {!isSubmitting && <span className="btn-arrow text-base leading-none font-thin">→</span>}
                 </button>
+
+                {/* Success/Error Feedback */}
+                {submitStatus === "success" && (
+                  <p className="text-center text-sm text-green-600 mt-2">Application submitted successfully!</p>
+                )}
+                {submitStatus === "error" && (
+                  <p className="text-center text-sm text-red-500 mt-2">Something went wrong. Please try again.</p>
+                )}
 
                 <p className="text-center text-[11px] font-thin flex items-center justify-center gap-1.5 pt-1" style={{ color: "rgba(30,0,80,0.35)" }}>
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -429,7 +376,7 @@ export default function FinalCTA() {
                   </svg>
                   Your information is secure and will never be shared.
                 </p>
-              </div>
+              </form>
             </div>
           </motion.div>
 
@@ -444,12 +391,8 @@ export default function FinalCTA() {
       {/* ── CSS: Zero JS style mutations ── */}
       <style>{`
         /* Contact tiles */
-        .contact-tile {
-          transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease, border-color 0.4s ease;
-        }
-        .contact-tile:hover {
-          transform: translateY(-3px);
-        }
+        .contact-tile { transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease, border-color 0.4s ease; }
+        .contact-tile:hover { transform: translateY(-3px); }
 
         /* Social icons */
         .social-icon:hover {
@@ -458,14 +401,10 @@ export default function FinalCTA() {
           color: #7b2fff !important;
           transform: translateY(-2px);
         }
-        .social-icon {
-          transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-        }
+        .social-icon { transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease; }
 
         /* Form inputs */
-        .form-input::placeholder {
-          color: rgba(30,0,80,0.3);
-        }
+        .form-input::placeholder { color: rgba(30,0,80,0.3); }
         .form-input:focus {
           background: rgba(123,47,255,0.05) !important;
           border-color: rgba(123,47,255,0.4) !important;
@@ -476,19 +415,13 @@ export default function FinalCTA() {
           transition: box-shadow 0.3s ease, transform 0.2s ease;
           will-change: transform;
         }
-        .submit-btn:hover {
+        .submit-btn:not(:disabled):hover {
           box-shadow: 0 15px 40px rgba(123,47,255,0.4) !important;
           transform: scale(1.02) !important;
         }
-        .submit-btn:active {
-          transform: scale(0.98) !important;
-        }
-        .btn-arrow {
-          transition: transform 0.3s ease;
-        }
-        .submit-btn:hover .btn-arrow {
-          transform: translateX(5px);
-        }
+        .submit-btn:not(:disabled):active { transform: scale(0.98) !important; }
+        .btn-arrow { transition: transform 0.3s ease; }
+        .submit-btn:not(:disabled):hover .btn-arrow { transform: translateX(5px); }
 
         /* Reduced motion */
         @media (prefers-reduced-motion: reduce) {
