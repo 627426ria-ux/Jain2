@@ -188,7 +188,7 @@ className="h-12 w-auto object-contain"
               style={{ willChange: "opacity, transform" }}
             >
               <motion.a
-                href="/application"
+  href="#cta"
                 onClick={() => setIsOpen(false)}
                 whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
                 className="w-full text-white text-[12px] font-light uppercase tracking-widest px-6 py-4 rounded-full flex justify-center items-center gap-3 transition-all"
